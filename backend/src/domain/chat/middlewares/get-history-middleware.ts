@@ -13,7 +13,7 @@ import { onErrorResumeNextWith } from 'rxjs';
 import { MoreThan } from 'typeorm';
 import { MessageEntity, MessageRepository } from 'src/domain/database';
 import { is } from 'src/lib';
-import { ChatContext, ChatMiddleware, ChatNextDelegate, GetContext, Source } from '../interfaces';
+import { ChatContext, ChatMiddleware, ChatNextDelegate, GetContext, MessagesHistory, Source } from '../interfaces';
 
 @Injectable()
 export class GetHistoryMiddleware implements ChatMiddleware {
@@ -48,11 +48,11 @@ export class GetHistoryMiddleware implements ChatMiddleware {
   }
 }
 
-class InternalChatHistory extends BaseListChatMessageHistory {
+class InternalChatHistory extends BaseListChatMessageHistory implements MessagesHistory {
   private readonly logger = new Logger(InternalChatHistory.name);
   private readonly tools: string[] = [];
   private readonly debug: string[] = [];
-  private readonly sources: Source[] = [];
+  private sources: Source[] = [];
   private stored?: BaseMessage[];
 
   lc_namespace!: string[];
@@ -70,10 +70,12 @@ class InternalChatHistory extends BaseListChatMessageHistory {
         this.tools.push(event.tool.name);
       } else if (event.type === 'debug') {
         this.debug.push(event.content);
-      } else if (event.type === 'sources') {
-        this.sources.push(...event.content);
       }
     });
+  }
+
+  addSources(sources: Source[]): void {
+    this.sources.push(...sources);
   }
 
   async getMessages(): Promise<BaseMessage[]> {
@@ -109,6 +111,19 @@ class InternalChatHistory extends BaseListChatMessageHistory {
     this.stored = undefined;
   }
 
+  private publishSourcesReferences() {
+    this.context.result.next({
+      type: 'sources',
+      content: this.sources.map((source) => ({
+        ...source,
+        chunk: {
+          ...source.chunk,
+          content: '',
+        },
+      })),
+    });
+  }
+
   async addMessage(message: BaseMessage, persistHuman?: boolean, editMessageId?: number): Promise<void> {
     const data = mapChatMessagesToStoredMessages([message]).map(({ type, data }) => ({
       type,
@@ -116,7 +131,7 @@ class InternalChatHistory extends BaseListChatMessageHistory {
         id: this.conversationId,
       },
       data,
-      // The tools is used for the UI only to display the used tools for old conversations.
+      // The tools is used for the UI only to fdisplay the used tools for old conversations.
       tools: isAIMessage(message) ? this.tools : [],
       // The debug information are only relevant for AI messages.
       debug: isAIMessage(message) ? this.debug : [],
@@ -126,6 +141,7 @@ class InternalChatHistory extends BaseListChatMessageHistory {
 
     try {
       if (isAIMessage(message)) {
+        this.publishSourcesReferences();
         const entity = await this.messages.save(data[0]);
         this.stored?.push(message);
         // Notifo the UI about the message ID, because it is needed to rate messages.

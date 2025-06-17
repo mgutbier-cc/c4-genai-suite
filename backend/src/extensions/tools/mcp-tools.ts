@@ -352,8 +352,10 @@ export class MCPToolsExtension implements Extension {
             );
             const userDefined = userArgs?.[name] ?? {};
 
+            const displayName = `${configuration.serverName}: ${name}`;
+
             return new NamedDynamicStructuredTool({
-              displayName: `${configuration.serverName}: ${name}`,
+              displayName,
               name: `${name}_${extensionId}`,
               description: params.description || description || name,
               schema: jsonSchemaToZod(schema),
@@ -372,9 +374,9 @@ export class MCPToolsExtension implements Extension {
                 this.logger.log(`Calling function ${name}`, { argument: argument });
                 const req: CallToolRequest = { method: 'tools/call', params: { name, arguments: argument } };
                 const res = await client.request(req, CallToolResultSchema);
-                const { sources, content } = transformMCPToolResponse(res);
+                const { sources, content } = transformMCPToolResponse(displayName, `mcp_${extensionId}`, res);
                 if (sources.length) {
-                  context.result.next({ type: 'sources', content: sources });
+                  context.history?.addSources(sources);
                 }
 
                 return content;

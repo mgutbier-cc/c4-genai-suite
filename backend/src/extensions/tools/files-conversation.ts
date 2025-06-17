@@ -46,7 +46,11 @@ export class FilesConversationExtension extends FilesExtension {
     };
   }
 
-  getMiddlewares(user: User, configuration: FilesConversationExtensionConfiguration, id: number): Promise<ChatMiddleware[]> {
+  getMiddlewares(
+    user: User,
+    configuration: FilesConversationExtensionConfiguration,
+    extensionId: number,
+  ): Promise<ChatMiddleware[]> {
     const middleware = {
       invoke: async (context: ChatContext, getContext: GetContext, next: ChatNextDelegate): Promise<any> => {
         const { bucket, showSources } = configuration;
@@ -90,7 +94,7 @@ export class FilesConversationExtension extends FilesExtension {
         }
 
         context.tools.push(
-          new InternalTool(description + enrichment, this.queryBus, context, bucketEntity, 20, id, showSources ?? false),
+          new InternalTool(description + enrichment, this.queryBus, context, bucketEntity, 20, extensionId, showSources ?? false),
         );
         return next(context);
       },
@@ -118,11 +122,11 @@ class InternalTool extends StructuredTool {
     private readonly context: ChatContext,
     private readonly bucket: Bucket,
     private readonly take: number,
-    id: number,
+    private readonly extensionId: number,
     private readonly showSources: boolean,
   ) {
     super();
-    this.name = `files_conversation_${id}`;
+    this.name = `files_conversation_${extensionId}`;
   }
 
   protected async _call(arg: z.infer<typeof this.schema>): Promise<string> {
@@ -145,7 +149,12 @@ class InternalTool extends StructuredTool {
       const sources = this.showSources ?? false;
 
       if (sources && result.sources) {
-        this.context.result.next({ type: 'sources', content: result.sources });
+        this.context.history?.addSources(
+          result.sources.map((x) => ({
+            ...x,
+            extensionName: this.name,
+          })),
+        );
       }
 
       return JSON.stringify(result.files, undefined, 2);

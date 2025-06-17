@@ -14,12 +14,18 @@
  */
 
 import { mapValues } from '../runtime';
-import type { SourceDtoIdentity } from './SourceDtoIdentity';
+import type { DocumentDto } from './DocumentDto';
 import {
-    SourceDtoIdentityFromJSON,
-    SourceDtoIdentityFromJSONTyped,
-    SourceDtoIdentityToJSON,
-} from './SourceDtoIdentity';
+    DocumentDtoFromJSON,
+    DocumentDtoFromJSONTyped,
+    DocumentDtoToJSON,
+} from './DocumentDto';
+import type { ChunkDto } from './ChunkDto';
+import {
+    ChunkDtoFromJSON,
+    ChunkDtoFromJSONTyped,
+    ChunkDtoToJSON,
+} from './ChunkDto';
 
 /**
  * 
@@ -34,11 +40,23 @@ export interface SourceDto {
      */
     title: string;
     /**
-     * 
-     * @type {SourceDtoIdentity}
+     * Extension name for retrieving chunks or documents
+     * @type {string}
      * @memberof SourceDto
      */
-    identity: SourceDtoIdentity;
+    extensionName: string;
+    /**
+     * Chunk information
+     * @type {ChunkDto}
+     * @memberof SourceDto
+     */
+    chunk: ChunkDto;
+    /**
+     * Document information
+     * @type {DocumentDto}
+     * @memberof SourceDto
+     */
+    document: DocumentDto;
     /**
      * Additional metadata about the source.
      * @type {{ [key: string]: any; }}
@@ -52,7 +70,9 @@ export interface SourceDto {
  */
 export function instanceOfSourceDto(value: object): value is SourceDto {
     if (!('title' in value) || value['title'] === undefined) return false;
-    if (!('identity' in value) || value['identity'] === undefined) return false;
+    if (!('extensionName' in value) || value['extensionName'] === undefined) return false;
+    if (!('chunk' in value) || value['chunk'] === undefined) return false;
+    if (!('document' in value) || value['document'] === undefined) return false;
     return true;
 }
 
@@ -67,7 +87,9 @@ export function SourceDtoFromJSONTyped(json: any, ignoreDiscriminator: boolean):
     return {
         
         'title': json['title'],
-        'identity': SourceDtoIdentityFromJSON(json['identity']),
+        'extensionName': json['extensionName'],
+        'chunk': ChunkDtoFromJSON(json['chunk']),
+        'document': DocumentDtoFromJSON(json['document']),
         'metadata': json['metadata'] == null ? undefined : json['metadata'],
     };
 }
@@ -79,7 +101,9 @@ export function SourceDtoToJSON(value?: SourceDto | null): any {
     return {
         
         'title': value['title'],
-        'identity': SourceDtoIdentityToJSON(value['identity']),
+        'extensionName': value['extensionName'],
+        'chunk': ChunkDtoToJSON(value['chunk']),
+        'document': DocumentDtoToJSON(value['document']),
         'metadata': value['metadata'],
     };
 }

@@ -216,6 +216,10 @@ export class ConfiguredExtension {
     return this.extension.fixedValues ?? {};
   }
 
+  async getChunks(documentUri: string, chunkUris: string[]): Promise<string[] | undefined> {
+    return this.extension.getChunks?.(this.entity.values, documentUri, chunkUris);
+  }
+
   getMiddlewares(
     user: User,
     userArgumentValues?: ExtensionUserArgumentValues,
@@ -264,6 +268,9 @@ export interface Extension {
     throwOnError: boolean,
     forceRebuild: boolean,
   ): Promise<ExtensionSpec>;
+
+  //TODO: instead of passing configuration to every method call, make the extensions stateful
+  getChunks?(configuration: ExtensionConfiguration, documentUri: string, chunkUris: string[]): Promise<string[]>;
 
   fixedValues?: Partial<ExtensionConfiguration>;
 

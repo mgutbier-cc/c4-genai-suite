@@ -66,6 +66,10 @@ export interface AgentArgument {
   streamRunnable?: boolean;
 }
 
+export interface MessagesHistory {
+  addSources(sources: Source[]): void;
+}
+
 export interface ChatContext {
   // The abort controller.
   readonly abort: AbortController;
@@ -127,7 +131,7 @@ export interface ChatContext {
   tokenUsage?: TokenUsage;
 
   // The history of previous messages
-  history?: BaseListChatMessageHistory;
+  history?: BaseListChatMessageHistory & MessagesHistory;
 }
 
 export interface TokenUsage {
@@ -304,18 +308,27 @@ export interface ChatMiddleware {
 
 export const CHAT_MIDDLEWARES_TOKEN = 'CHAT_MIDDLEWARES';
 
-export type Source = {
-  title: string;
+export type Chunk = {
+  uri?: string | null; // s5q-chunk://{chunkId}, reis-chunk://{chunkId}
+  content: string; // the text representation of the chunk
+  mimeType: string; // text/plain
+  pages?: number[] | null;
+  score: number;
+};
 
-  identity: {
-    fileName: string;
-    sourceSystem: string;
-    uniquePathOrId?: string | null;
-    link?: string | null;
-    version?: string | null;
-    mimeType?: string | null;
-    fileSize?: number | null;
-  };
+export type Document = {
+  uri?: string | null; // 's5q-document://{documentId}', reis-document://{documentId}
+  name?: string | null;
+  mimeType: string; // application/pdf
+  size?: number | null;
+  link?: string | null;
+};
+
+export type Source = {
+  title: string; // title of the source document
+  extensionName: string;
+  chunk: Chunk;
+  document: Document;
   metadata?: Record<string, any> | null;
 };
 

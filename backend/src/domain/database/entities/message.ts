@@ -26,7 +26,10 @@ export class MessageEntity {
   debug?: any;
 
   @Column('json', { nullable: true })
-  sources!: Source[];
+  sources?: Source[];
+
+  @Column('json', { nullable: true })
+  sourcesOriginal?: Record<string, any>[];
 
   @ManyToOne(() => ConversationEntity, (conversation) => conversation.messages, { onDelete: 'CASCADE' })
   conversation!: ConversationEntity;

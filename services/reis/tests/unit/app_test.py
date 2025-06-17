@@ -2,7 +2,6 @@ import pytest
 from fastapi.testclient import TestClient
 from langchain_community.embeddings import FakeEmbeddings
 from langchain_core.documents import Document
-from collections import Counter
 
 from rei_s.services.stores.devnull_store import DevNullStoreAdapter
 
@@ -78,9 +77,9 @@ def test_get_files_sources(mocker, client):
 
     content = response.json()
     assert len(content["sources"]) == 3
-    assert content["sources"][0]["metadata"]["format"] == "pdf"
-    assert content["sources"][1]["metadata"]["format"] == "xml"
-    assert content["sources"][2]["metadata"]["format"] == "pdf"
+    assert content["sources"][0]["document"]["mimeType"] == "pdf"
+    assert content["sources"][1]["document"]["mimeType"] == "xml"
+    assert content["sources"][2]["document"]["mimeType"] == "pdf"
 
 
 def test_get_files_sources_page_concat(mocker, client):
@@ -118,9 +117,12 @@ def test_get_files_sources_page_concat(mocker, client):
     assert response.status_code == 200
 
     content = response.json()
-    assert len(content["sources"]) == 2
-    assert Counter(content["sources"][0]["metadata"]["pages"]) == Counter(["5", "9", "4"])
-    assert Counter(content["sources"][1]["metadata"]["pages"]) == Counter(["42", "109"])
+    assert len(content["sources"]) == 5
+    assert content["sources"][0]["chunk"]["pages"] == [5]
+    assert content["sources"][1]["chunk"]["pages"] == [9]
+    assert content["sources"][2]["chunk"]["pages"] == [4]
+    assert content["sources"][3]["chunk"]["pages"] == [109]
+    assert content["sources"][4]["chunk"]["pages"] == [42]
 
 
 def test_get_files_sources_no_page(mocker, client):
@@ -148,9 +150,10 @@ def test_get_files_sources_no_page(mocker, client):
     assert response.status_code == 200
 
     content = response.json()
-    assert len(content["sources"]) == 2
-    assert content["sources"][0]["metadata"]["pages"] == ["5"]
-    assert content["sources"][1]["metadata"]["pages"] == []
+    assert len(content["sources"]) == 3
+    assert content["sources"][0]["chunk"]["pages"] == [5]
+    assert content["sources"][1]["chunk"]["pages"] is None
+    assert content["sources"][2]["chunk"]["pages"] is None
 
 
 def test_get_files_no_files(mocker, client):

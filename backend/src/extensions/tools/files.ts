@@ -6,7 +6,7 @@ import { z } from 'zod';
 import { ChatContext, ChatMiddleware, ChatNextDelegate, GetContext } from 'src/domain/chat';
 import { BucketEntity, BucketRepository, FileEntity, FileRepository } from 'src/domain/database';
 import { Extension, ExtensionArgument, ExtensionConfiguration, ExtensionSpec } from 'src/domain/extensions';
-import { Bucket, SearchFiles, SearchFilesResponse } from 'src/domain/files';
+import { Bucket, GetDocumentContent, GetDocumentContentResponse, SearchFiles, SearchFilesResponse } from 'src/domain/files';
 import { User } from 'src/domain/users';
 import { I18nService } from '../../localization/i18n.service';
 
@@ -149,6 +149,12 @@ export class FilesExtension implements Extension {
 
     return Promise.resolve([middleware]);
   }
+
+  async getChunks(configuration: FilesExtensionConfiguration, _: string, chunkUris: string[]): Promise<string[]> {
+    const bucketId = configuration.bucket;
+    const response: GetDocumentContentResponse = await this.queryBus.execute(new GetDocumentContent(bucketId, chunkUris));
+    return response.documentContent.filter((x) => x != null);
+  }
 }
 
 class InternalTool extends StructuredTool {
@@ -170,12 +176,12 @@ class InternalTool extends StructuredTool {
     private readonly context: ChatContext,
     private readonly bucket: Bucket,
     private readonly take: number,
-    id: number,
+    private readonly extensionId: number,
     private readonly userArgs: UserArgs,
   ) {
     super();
 
-    this.name = `files_${id}`;
+    this.name = `files_${extensionId}`;
   }
 
   protected async _call(arg: z.infer<typeof this.schema>): Promise<string> {
@@ -196,7 +202,12 @@ class InternalTool extends StructuredTool {
       );
 
       if (result.sources) {
-        this.context.result.next({ type: 'sources', content: result.sources });
+        this.context.history?.addSources(
+          result.sources.map((x) => ({
+            ...x,
+            extensionName: this.name,
+          })),
+        );
       }
 
       if (result.debug) {
