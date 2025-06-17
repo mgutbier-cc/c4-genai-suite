@@ -366,7 +366,12 @@ export class MCPToolsExtension implements Extension<Configuration> {
                   Object.entries(templateAdminArgs).map(([key, value]) => [
                     key,
                     typeof value === 'string'
-                      ? renderString(value, { ...context, userArgs, llmValue: args[key] as string })
+                      ? renderString(value, {
+                          ...context,
+                          userArgs,
+                          language: this.i18n.language,
+                          llmValue: args[key] as string,
+                        })
                       : value,
                   ]),
                 );
