@@ -326,7 +326,7 @@ export type Document = {
 
 export type Source = {
   title: string; // title of the source document
-  extensionName: string;
+  extensionExternalId: string;
   chunk: Chunk;
   document: Document;
   metadata?: Record<string, any> | null;

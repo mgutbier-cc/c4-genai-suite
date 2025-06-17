@@ -46,7 +46,10 @@ describe(TestExtension.name, () => {
 
   it('should throw not found when extension entity does not exist', async () => {
     jest.spyOn(explorer, 'getExtension').mockImplementation((name) => {
-      return { spec: { name, arguments: {}, title: 'test', description: '', type: 'llm' }, test: async () => {} } as Extension;
+      return { spec: { name, arguments: {}, title: 'test', description: '', type: 'llm' }, test: async () => {} } as Omit<
+        Extension,
+        'getMiddlewares'
+      > as Extension;
     });
 
     jest.spyOn(repository, 'findOneBy').mockImplementation(() => Promise.resolve(null));
@@ -63,7 +66,10 @@ describe(TestExtension.name, () => {
     const test = jest.fn().mockImplementation(() => {});
 
     jest.spyOn(explorer, 'getExtension').mockImplementation((name) => {
-      return { spec: { name, arguments: {}, title: 'test', description: '', type: 'llm' }, test } as Extension;
+      return { spec: { name, arguments: {}, title: 'test', description: '', type: 'llm' }, test } as Omit<
+        Extension,
+        'getMiddlewares'
+      > as Extension;
     });
 
     jest.spyOn(repository, 'findOneBy').mockImplementation(async () => {
@@ -97,7 +103,7 @@ describe(TestExtension.name, () => {
           type: 'llm',
         },
         test,
-      } as Extension;
+      } as Omit<Extension, 'getMiddlewares'> as Extension;
     });
 
     jest.spyOn(repository, 'findOneBy').mockImplementation(async () => {

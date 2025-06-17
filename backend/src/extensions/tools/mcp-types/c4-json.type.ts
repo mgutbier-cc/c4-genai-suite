@@ -22,7 +22,9 @@ export type C4JsonType = {
     metadata: {
       uri: string;
       mime_type: string;
-      attributes: Record<string, any>;
+      attributes?: {
+        [key: string]: any;
+      };
     };
   };
 };
@@ -35,14 +37,13 @@ export const convertC4JsonToText = (type: C4JsonType): { type: 'text'; text: str
   return { type: 'text', text: type.data.original ?? type.data.text };
 };
 
-export const convertC4JsonToSource = (extensionName: string, type: C4JsonType): Source => {
+export const convertC4JsonToSource = (extensionExternalId: string, type: C4JsonType): Source => {
   const metadata = type.data.metadata;
   return {
-    title: type.data.id,
-    extensionName,
+    title: type.data.title ?? type.data.id,
+    extensionExternalId,
     chunk: {
-      uri: type.data.id,
-      content: type.data.text,
+      content: type.data.original ?? type.data.text,
       mimeType: 'text/plain',
       pages: getDistinctPages(type.data.region),
       score: type.data.score,
@@ -50,7 +51,6 @@ export const convertC4JsonToSource = (extensionName: string, type: C4JsonType): 
     document: {
       uri: type.data.metadata.uri,
       mimeType: type.data.metadata.mime_type,
-      name: type.data.id,
     },
     metadata: metadata.attributes ?? {},
   };

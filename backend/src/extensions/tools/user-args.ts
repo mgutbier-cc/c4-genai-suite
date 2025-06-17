@@ -1,7 +1,7 @@
 import { StructuredTool } from '@langchain/core/tools';
 import { z } from 'zod';
 import { ChatContext, ChatMiddleware, ChatNextDelegate, ExtensionUserArgumentValues, GetContext } from 'src/domain/chat';
-import { Extension, ExtensionArgument, ExtensionConfiguration, ExtensionSpec } from 'src/domain/extensions';
+import { Extension, ExtensionArgument, ExtensionEntity, ExtensionSpec } from 'src/domain/extensions';
 import { User } from 'src/domain/users';
 import { I18nService } from '../../localization/i18n.service';
 
@@ -79,15 +79,10 @@ export class UserArgsExtension implements Extension {
     return Object.fromEntries(Object.keys(userArguments).map((key) => [key, getDefault(userArguments[key])]));
   }
 
-  getMiddlewares(
-    user: User,
-    configuration: ExtensionConfiguration,
-    id: number,
-    userArgs?: ExtensionUserArgumentValues,
-  ): Promise<ChatMiddleware[]> {
+  getMiddlewares(_user: User, extension: ExtensionEntity, userArgs?: ExtensionUserArgumentValues): Promise<ChatMiddleware[]> {
     const middleware = {
       invoke: async (context: ChatContext, getContext: GetContext, next: ChatNextDelegate): Promise<any> => {
-        context.tools.push(new InternalTool(userArgs ?? this.getDefaultArgs(), context, id));
+        context.tools.push(new InternalTool(userArgs ?? this.getDefaultArgs(), context, extension.externalId));
         return next(context);
       },
     };
@@ -110,11 +105,11 @@ class InternalTool extends StructuredTool {
   constructor(
     private readonly userArgs: any,
     private readonly context: ChatContext,
-    id: number,
+    extensionExternalId: string,
   ) {
     super();
 
-    this.name = `user_args_${id}`;
+    this.name = extensionExternalId;
   }
 
   protected _call(): Promise<string> {

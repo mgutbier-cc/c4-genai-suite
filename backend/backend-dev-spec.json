@@ -1397,12 +1397,12 @@
         "type": "object",
         "properties": {
           "title": { "type": "string", "description": "The title of the source." },
-          "extensionName": { "type": "string", "description": "Extension name for retrieving chunks or documents" },
+          "extensionExternalId": { "type": "string", "description": "Extension name for retrieving chunks or documents" },
           "chunk": { "description": "Chunk information", "allOf": [{ "$ref": "#/components/schemas/ChunkDto" }] },
           "document": { "description": "Document information", "allOf": [{ "$ref": "#/components/schemas/DocumentDto" }] },
           "metadata": { "type": "object", "description": "Additional metadata about the source.", "additionalProperties": true }
         },
-        "required": ["title", "extensionName", "chunk", "document"]
+        "required": ["title", "extensionExternalId", "chunk", "document"]
       },
       "StreamSourcesEvent": {
         "type": "object",

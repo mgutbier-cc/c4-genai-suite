@@ -44,7 +44,7 @@ export interface SourceDto {
      * @type {string}
      * @memberof SourceDto
      */
-    extensionName: string;
+    extensionExternalId: string;
     /**
      * Chunk information
      * @type {ChunkDto}
@@ -70,7 +70,7 @@ export interface SourceDto {
  */
 export function instanceOfSourceDto(value: object): value is SourceDto {
     if (!('title' in value) || value['title'] === undefined) return false;
-    if (!('extensionName' in value) || value['extensionName'] === undefined) return false;
+    if (!('extensionExternalId' in value) || value['extensionExternalId'] === undefined) return false;
     if (!('chunk' in value) || value['chunk'] === undefined) return false;
     if (!('document' in value) || value['document'] === undefined) return false;
     return true;
@@ -87,7 +87,7 @@ export function SourceDtoFromJSONTyped(json: any, ignoreDiscriminator: boolean):
     return {
         
         'title': json['title'],
-        'extensionName': json['extensionName'],
+        'extensionExternalId': json['extensionExternalId'],
         'chunk': ChunkDtoFromJSON(json['chunk']),
         'document': DocumentDtoFromJSON(json['document']),
         'metadata': json['metadata'] == null ? undefined : json['metadata'],
@@ -101,7 +101,7 @@ export function SourceDtoToJSON(value?: SourceDto | null): any {
     return {
         
         'title': value['title'],
-        'extensionName': value['extensionName'],
+        'extensionExternalId': value['extensionExternalId'],
         'chunk': ChunkDtoToJSON(value['chunk']),
         'document': DocumentDtoToJSON(value['document']),
         'metadata': value['metadata'],

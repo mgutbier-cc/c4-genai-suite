@@ -6,36 +6,16 @@ import { C4JsonType, convertC4JsonToSource, convertC4JsonToText } from './c4-jso
 export type MCPText = { type: 'text'; text: string };
 export type TransformedResponse = { content: MCPText[]; sources: Source[] };
 
-export const convertTextToSource = (title: string, extensionName: string, text: string, score: number): Source => {
-  return {
-    title,
-    extensionName,
-    chunk: {
-      content: text,
-      mimeType: 'text/plain',
-      pages: [],
-      score,
-    },
-    document: {
-      mimeType: 'text/plain',
-      name: extensionName,
-    },
-    metadata: {},
-  };
-};
-
 export function transformMCPToolResponse(
-  toolName: string,
-  extensionName: string,
+  extensionExternalId: string,
   res: z.infer<typeof CallToolResultSchema>,
 ): TransformedResponse {
   const c4Content = res.content.filter((x) => x.type === 'resource' && x.resource.mimeType === 'application/x-c4-json-v1');
   if (!c4Content.length) {
     const content = res.content.filter((x) => x.type === 'text');
-    const getScore = (index: number) => content.length - index;
     return {
       content,
-      sources: content.map((x, i) => convertTextToSource(toolName, extensionName, x.text, getScore(i))),
+      sources: [],
     };
   }
 
@@ -47,7 +27,7 @@ export function transformMCPToolResponse(
 
       const { text } = curr.resource;
       const c4JsonData = JSON.parse(text as string) as C4JsonType;
-      prev.sources.push(convertC4JsonToSource(extensionName, c4JsonData));
+      prev.sources.push(convertC4JsonToSource(extensionExternalId, c4JsonData));
       prev.content.push(convertC4JsonToText(c4JsonData));
 
       return prev;

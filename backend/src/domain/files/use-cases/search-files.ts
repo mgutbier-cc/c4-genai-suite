@@ -25,7 +25,7 @@ export class SearchFilesResponse {
   constructor(
     public readonly files: SearchResult[],
     public readonly debug?: string,
-    public readonly sources?: Omit<Source, 'extensionName'>[],
+    public readonly sources?: Omit<Source, 'extensionExternalId'>[],
   ) {}
 }
 

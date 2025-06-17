@@ -90,7 +90,7 @@ describe(CreateExtension.name, () => {
           type: 'llm',
         },
         test,
-      } as Extension;
+      } as Omit<Extension, 'getMiddlewares'> as Extension;
     });
 
     const result = await handler.execute(

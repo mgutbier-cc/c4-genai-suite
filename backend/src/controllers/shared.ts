@@ -169,7 +169,7 @@ export class SourceDto {
   // or
   @ApiProperty({ description: 'Extension name for retrieving chunks or documents', required: true })
   @IsNumber()
-  extensionName!: string; // --> Extension.getChunks(uri: string[]); Extension.getDocument(uri: string)
+  extensionExternalId!: string; // --> Extension.getChunks(uri: string[]); Extension.getDocument(uri: string)
 
   @ApiProperty({ description: 'Chunk information', required: true })
   @Type(() => ChunkDto)

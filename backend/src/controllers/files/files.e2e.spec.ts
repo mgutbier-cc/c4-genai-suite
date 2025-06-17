@@ -124,13 +124,13 @@ function createMessageEntity(repository: Repository<MessageEntity>) {
   entity.type = 'ai';
   entity.sources = [
     {
-      extensionName: '',
+      extensionExternalId: '',
       title: '',
       document: { uri: '1', mimeType: 'text/plain' },
       chunk: { uri: '1', mimeType: 'text/plain', content: 'content1', pages: [], score: 0 },
     },
     {
-      extensionName: '',
+      extensionExternalId: '',
       title: '',
       document: { uri: '1', mimeType: 'text/plain' },
       chunk: { uri: '1', mimeType: 'text/plain', content: 'content2', pages: [], score: 0 },

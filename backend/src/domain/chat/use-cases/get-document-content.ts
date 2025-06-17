@@ -38,9 +38,9 @@ export class GetDocumentContentHandler implements IQueryHandler<GetDocumentConte
       return [];
     }
 
-    //TO DO: instead of splitting, match the extensionName with the internalId of the extension
-    const extensionId = sources[0].extensionName.split('_')[1];
-    const response: GetExtensionResponse = await this.queryBus.execute(new GetExtension(+extensionId));
+    const response: GetExtensionResponse = await this.queryBus.execute(
+      new GetExtension({ externalId: sources[0].extensionExternalId }),
+    );
 
     return (await response.extension?.getChunks(documentUri, chunkUris)) ?? [];
   }

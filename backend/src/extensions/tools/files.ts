@@ -5,7 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { z } from 'zod';
 import { ChatContext, ChatMiddleware, ChatNextDelegate, GetContext } from 'src/domain/chat';
 import { BucketEntity, BucketRepository, FileEntity, FileRepository } from 'src/domain/database';
-import { Extension, ExtensionArgument, ExtensionConfiguration, ExtensionSpec } from 'src/domain/extensions';
+import { Extension, ExtensionArgument, ExtensionConfiguration, ExtensionEntity, ExtensionSpec } from 'src/domain/extensions';
 import { Bucket, GetDocumentContent, GetDocumentContentResponse, SearchFiles, SearchFilesResponse } from 'src/domain/files';
 import { User } from 'src/domain/users';
 import { I18nService } from '../../localization/i18n.service';
@@ -15,7 +15,9 @@ type UserArgs = {
 };
 
 @Extension()
-export class FilesExtension implements Extension {
+export class FilesExtension<T extends FilesExtensionConfiguration = FilesExtensionConfiguration>
+  implements Extension<FilesExtensionConfiguration>
+{
   constructor(
     @Inject(forwardRef(() => QueryBus))
     protected readonly queryBus: QueryBus,
@@ -83,15 +85,10 @@ export class FilesExtension implements Extension {
     return Object.fromEntries(Object.keys(userArguments).map((key) => [key, getDefault(userArguments[key])]));
   }
 
-  getMiddlewares(
-    user: User,
-    configuration: FilesExtensionConfiguration,
-    id: number,
-    userArgs?: UserArgs,
-  ): Promise<ChatMiddleware[]> {
+  getMiddlewares(user: User, extension: ExtensionEntity<T>, userArgs?: UserArgs): Promise<ChatMiddleware[]> {
     const middleware = {
       invoke: async (context: ChatContext, getContext: GetContext, next: ChatNextDelegate): Promise<any> => {
-        const { bucket, description, take } = configuration;
+        const { bucket, description, take } = extension.values;
 
         let toolDescription = 'Use this tool to semantically search files.\n\n';
         toolDescription += [
@@ -141,7 +138,15 @@ export class FilesExtension implements Extension {
 
         const userArgsWithDefaults = userArgs ?? this.getDefaultArgs();
         context.tools.push(
-          new InternalTool(enrichedDescription, this.queryBus, context, bucketEntity, take, id, userArgsWithDefaults),
+          new InternalTool(
+            enrichedDescription,
+            this.queryBus,
+            context,
+            bucketEntity,
+            take,
+            extension.externalId,
+            userArgsWithDefaults,
+          ),
         );
         return next(context);
       },
@@ -176,12 +181,12 @@ class InternalTool extends StructuredTool {
     private readonly context: ChatContext,
     private readonly bucket: Bucket,
     private readonly take: number,
-    private readonly extensionId: number,
+    private readonly extensionExternalId: string,
     private readonly userArgs: UserArgs,
   ) {
     super();
 
-    this.name = `files_${extensionId}`;
+    this.name = extensionExternalId;
   }
 
   protected async _call(arg: z.infer<typeof this.schema>): Promise<string> {
@@ -205,7 +210,7 @@ class InternalTool extends StructuredTool {
         this.context.history?.addSources(
           result.sources.map((x) => ({
             ...x,
-            extensionName: this.name,
+            extensionExternalId: this.extensionExternalId,
           })),
         );
       }

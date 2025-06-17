@@ -10,7 +10,7 @@ import { diff } from 'json-diff-ts';
 import { renderString } from 'nunjucks';
 import { z } from 'zod';
 import { ChatContext, ChatMiddleware, ChatNextDelegate, GetContext } from 'src/domain/chat';
-import { Extension, ExtensionArgument, ExtensionObjectArgument, ExtensionSpec } from 'src/domain/extensions';
+import { Extension, ExtensionArgument, ExtensionEntity, ExtensionObjectArgument, ExtensionSpec } from 'src/domain/extensions';
 import { User } from 'src/domain/users';
 import { I18nService } from '../../localization/i18n.service';
 import { transformMCPToolResponse } from './mcp-types/transformer';
@@ -212,7 +212,7 @@ function toUserArguments(values: Configuration, schemaArgument: ExtensionObjectA
 
 @Extension()
 @Injectable()
-export class MCPToolsExtension implements Extension {
+export class MCPToolsExtension implements Extension<Configuration> {
   private logger = new Logger(this.constructor.name);
 
   constructor(protected readonly i18n: I18nService) {}
@@ -263,14 +263,16 @@ export class MCPToolsExtension implements Extension {
   }
 
   async buildSpec(
-    values: Configuration,
-    state: ExtensionState,
+    extension: ExtensionEntity<Configuration>,
     throwOnError: boolean,
     forceRebuild: boolean,
   ): Promise<ExtensionSpec> {
     const spec = this.spec;
+    const state = (extension.state ?? {}) as ExtensionState;
+    const values = extension.values;
+
     try {
-      const changed = values.endpoint !== state.endpoint;
+      const changed = values.endpoint !== state?.endpoint;
 
       if (changed || !state.tools || forceRebuild) {
         const { tools } = await this.getTools(values);
@@ -327,14 +329,13 @@ export class MCPToolsExtension implements Extension {
 
   async getMiddlewares(
     _user: User,
-    configuration: Configuration,
-    extensionId: number,
+    extension: ExtensionEntity<Configuration>,
     userArgs?: Record<string, Record<string, any>>,
   ): Promise<ChatMiddleware[]> {
     const middleware = {
       invoke: async (context: ChatContext, _: GetContext, next: ChatNextDelegate): Promise<any> => {
-        const { tools, client } = (await this.getTools(configuration)) ?? [];
-        const schemaData = configuration.schema ?? {};
+        const { tools, client } = (await this.getTools(extension.values)) ?? [];
+        const schemaData = extension.values.schema ?? {};
 
         const filteredTools = tools.filter((x) => schemaData[x.name]?.enabled);
 
@@ -352,11 +353,11 @@ export class MCPToolsExtension implements Extension {
             );
             const userDefined = userArgs?.[name] ?? {};
 
-            const displayName = `${configuration.serverName}: ${name}`;
+            const displayName = `${extension.values.serverName}: ${name}`;
 
             return new NamedDynamicStructuredTool({
               displayName,
-              name: `${name}_${extensionId}`,
+              name: `${extension.externalId}_${name}`,
               description: params.description || description || name,
               schema: jsonSchemaToZod(schema),
               func: async (args: Record<string, any>) => {
@@ -374,7 +375,7 @@ export class MCPToolsExtension implements Extension {
                 this.logger.log(`Calling function ${name}`, { argument: argument });
                 const req: CallToolRequest = { method: 'tools/call', params: { name, arguments: argument } };
                 const res = await client.request(req, CallToolResultSchema);
-                const { sources, content } = transformMCPToolResponse(displayName, `mcp_${extensionId}`, res);
+                const { sources, content } = transformMCPToolResponse(extension.externalId, res);
                 if (sources.length) {
                   context.history?.addSources(sources);
                 }

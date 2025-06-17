@@ -3,13 +3,13 @@ import { Logger, NotFoundException } from '@nestjs/common';
 import { QueryBus } from '@nestjs/cqrs';
 import { z } from 'zod';
 import { ChatContext, ChatMiddleware, ChatNextDelegate, GetContext } from 'src/domain/chat';
-import { Extension, ExtensionSpec } from 'src/domain/extensions';
+import { Extension, ExtensionEntity, ExtensionSpec } from 'src/domain/extensions';
 import { User } from 'src/domain/users';
 import { Bucket, GetFiles, GetFilesResponse, SearchFiles, SearchFilesResponse } from '../../domain/files';
 import { FilesExtension, FilesExtensionConfiguration } from './files';
 
 @Extension()
-export class FilesConversationExtension extends FilesExtension {
+export class FilesConversationExtension extends FilesExtension<FilesConversationExtensionConfiguration> {
   override get spec(): ExtensionSpec {
     return {
       name: 'files-conversation',
@@ -46,14 +46,10 @@ export class FilesConversationExtension extends FilesExtension {
     };
   }
 
-  getMiddlewares(
-    user: User,
-    configuration: FilesConversationExtensionConfiguration,
-    extensionId: number,
-  ): Promise<ChatMiddleware[]> {
+  getMiddlewares(user: User, extension: ExtensionEntity<FilesConversationExtensionConfiguration>): Promise<ChatMiddleware[]> {
     const middleware = {
       invoke: async (context: ChatContext, getContext: GetContext, next: ChatNextDelegate): Promise<any> => {
-        const { bucket, showSources } = configuration;
+        const { bucket, showSources } = extension.values;
 
         const bucketEntity = await this.buckets.findOneBy({ id: bucket });
         if (!bucketEntity) {
@@ -94,7 +90,15 @@ export class FilesConversationExtension extends FilesExtension {
         }
 
         context.tools.push(
-          new InternalTool(description + enrichment, this.queryBus, context, bucketEntity, 20, extensionId, showSources ?? false),
+          new InternalTool(
+            description + enrichment,
+            this.queryBus,
+            context,
+            bucketEntity,
+            20,
+            extension.externalId,
+            showSources ?? false,
+          ),
         );
         return next(context);
       },
@@ -122,11 +126,11 @@ class InternalTool extends StructuredTool {
     private readonly context: ChatContext,
     private readonly bucket: Bucket,
     private readonly take: number,
-    private readonly extensionId: number,
+    private readonly extensionExternalId: string,
     private readonly showSources: boolean,
   ) {
     super();
-    this.name = `files_conversation_${extensionId}`;
+    this.name = extensionExternalId;
   }
 
   protected async _call(arg: z.infer<typeof this.schema>): Promise<string> {
@@ -152,7 +156,7 @@ class InternalTool extends StructuredTool {
         this.context.history?.addSources(
           result.sources.map((x) => ({
             ...x,
-            extensionName: this.name,
+            extensionExternalId: this.name,
           })),
         );
       }

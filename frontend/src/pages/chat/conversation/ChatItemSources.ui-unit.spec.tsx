@@ -12,14 +12,14 @@ describe('mergeIdenticalSources', () => {
     const sources: SourceDto[] = [
       {
         title: 'Source 1',
-        extensionName: '0',
+        extensionExternalId: '0',
         chunk: { uri: '1', content: '', pages: [1, 2], mimeType: 'text/plain' },
         document: { name: 'file1', uri: 'doc1', mimeType: 'text/plain' },
         metadata: { key1: 'value1' },
       },
       {
         title: 'Source 1',
-        extensionName: '0',
+        extensionExternalId: '0',
         chunk: { uri: '2', content: '', pages: [4], mimeType: 'text/plain' },
         document: { name: 'file1', uri: 'doc1', mimeType: 'text/plain' },
         metadata: { key1: 'value1' },
@@ -40,7 +40,7 @@ describe('mergeIdenticalSources', () => {
           name: 'file1',
           uri: 'doc1',
         },
-        extensionName: '0',
+        extensionExternalId: '0',
         metadata: {
           key1: 'value1',
           pages: '1-2, 4',
@@ -53,21 +53,21 @@ describe('mergeIdenticalSources', () => {
   it('should merge pages correctly and format them as ranges', () => {
     const sources: SourceDto[] = [
       {
-        extensionName: '1',
+        extensionExternalId: '1',
         title: 'Source 1',
         document: { uri: 'systemA', mimeType: 'text/plain' },
         chunk: { uri: null, pages: [1, 3, 5], content: '', mimeType: 'text/plain' },
         metadata: {},
       },
       {
-        extensionName: '1',
+        extensionExternalId: '1',
         title: 'Source 2',
         document: { uri: 'systemB', mimeType: 'text/plain' },
         chunk: { uri: null, pages: [5, 4, 1], content: '', mimeType: 'text/plain' },
         metadata: {},
       },
       {
-        extensionName: '1',
+        extensionExternalId: '1',
         title: 'Source 1',
         document: { uri: 'systemA', mimeType: 'text/plain' },
         chunk: { uri: null, pages: [2, 4, 6], content: '', mimeType: 'text/plain' },
@@ -88,7 +88,7 @@ describe('mergeIdenticalSources', () => {
           mimeType: 'text/plain',
           uri: 'systemA',
         },
-        extensionName: '1',
+        extensionExternalId: '1',
         metadata: {
           pages: '1-6',
         },
@@ -105,7 +105,7 @@ describe('mergeIdenticalSources', () => {
           mimeType: 'text/plain',
           uri: 'systemB',
         },
-        extensionName: '1',
+        extensionExternalId: '1',
         metadata: {
           pages: '1, 4-5',
         },
@@ -118,14 +118,14 @@ describe('mergeIdenticalSources', () => {
     const sources: SourceDto[] = [
       {
         title: 'Source 1',
-        extensionName: '1',
+        extensionExternalId: '1',
         document: { uri: 'systemA', mimeType: 'text/plain' },
         chunk: { content: '', uri: 'file1', mimeType: 'text/plain', pages: [1, 3, 5] },
         metadata: {},
       },
       {
         title: 'Source 2',
-        extensionName: '1',
+        extensionExternalId: '1',
         document: { uri: 'systemB', mimeType: 'text/plain' },
         chunk: { content: '', uri: 'file2', mimeType: 'text/plain', pages: [5, 4, 1] },
         metadata: {},
@@ -140,14 +140,14 @@ describe('mergeIdenticalSources', () => {
     const sources: SourceDto[] = [
       {
         title: 'Source 1',
-        extensionName: '1',
+        extensionExternalId: '1',
         document: { uri: 'systemA', mimeType: 'text/plain' },
         chunk: { uri: 'file1', pages: [1, 2], mimeType: 'text/plain', content: '' },
         metadata: { key1: 'oneValue', pages: ['1', '2'] },
       },
       {
         title: 'Source 1',
-        extensionName: '1',
+        extensionExternalId: '1',
         document: { uri: 'systemA', mimeType: 'text/plain' },
         chunk: { uri: 'file1', pages: [4], mimeType: 'text/plain', content: '' },
         metadata: { key1: 'otherValue', pages: ['4'] },
@@ -167,7 +167,7 @@ describe('mergeIdenticalSources', () => {
           mimeType: 'text/plain',
           uri: 'systemA',
         },
-        extensionName: '1',
+        extensionExternalId: '1',
         metadata: {
           key1: 'oneValue, otherValue',
           pages: '1-2, 4',
@@ -181,14 +181,14 @@ describe('mergeIdenticalSources', () => {
     const sources: SourceDto[] = [
       {
         title: 'Source 1',
-        extensionName: '1',
+        extensionExternalId: '1',
         document: { uri: 'systemA', mimeType: 'text/plain' },
         chunk: { uri: 'file1', pages: [1, 2], mimeType: 'text/plain', content: '' },
         metadata: { key1: 'value1' },
       },
       {
         title: 'Source 1',
-        extensionName: '1',
+        extensionExternalId: '1',
         document: { uri: 'systemA', mimeType: 'text/plain' },
         chunk: { uri: 'file1', pages: [false, 5] as unknown as number[], mimeType: 'text/plain', content: '' },
         metadata: { key1: 'value1' },
@@ -209,7 +209,7 @@ describe('mergeIdenticalSources', () => {
           mimeType: 'text/plain',
           uri: 'systemA',
         },
-        extensionName: '1',
+        extensionExternalId: '1',
         metadata: { key1: 'value1', pages: '1-2' },
       },
     ]);
@@ -219,14 +219,14 @@ describe('mergeIdenticalSources', () => {
     const sources: SourceDto[] = [
       {
         title: 'Source 1',
-        extensionName: '1',
+        extensionExternalId: '1',
         document: { uri: 'systemA', mimeType: 'text/plain' },
         chunk: { uri: 'file1', pages: [false] as unknown as number[], mimeType: 'text/plain', content: '' },
         metadata: { key1: 'value1' },
       },
       {
         title: 'Source 1',
-        extensionName: '1',
+        extensionExternalId: '1',
         document: { uri: 'systemA', mimeType: 'text/plain' },
         chunk: { uri: 'file1', pages: [1, 5], mimeType: 'text/plain', content: '' },
         metadata: { key1: 'value1' },
@@ -247,7 +247,7 @@ describe('mergeIdenticalSources', () => {
           mimeType: 'text/plain',
           uri: 'systemA',
         },
-        extensionName: '1',
+        extensionExternalId: '1',
         metadata: { key1: 'value1', pages: '1, 5' },
       },
     ]);
@@ -257,14 +257,14 @@ describe('mergeIdenticalSources', () => {
     const sources: SourceDto[] = [
       {
         title: 'Source 1',
-        extensionName: '1',
+        extensionExternalId: '1',
         document: { uri: 'systemA', mimeType: 'text/plain' },
         chunk: { uri: 'file1', mimeType: 'text/plain', content: '' },
         metadata: { key1: 'value1', key2: 'value2' },
       },
       {
         title: 'Source 1',
-        extensionName: '1',
+        extensionExternalId: '1',
         document: { uri: 'systemA', mimeType: 'text/plain' },
         chunk: { uri: 'file1', mimeType: 'text/plain', content: '' },
         metadata: { key1: 'value1' },
@@ -283,7 +283,7 @@ describe('mergeIdenticalSources', () => {
           mimeType: 'text/plain',
           uri: 'systemA',
         },
-        extensionName: '1',
+        extensionExternalId: '1',
         metadata: {
           key1: 'value1',
           key2: 'value2',
@@ -298,14 +298,14 @@ describe('mergeIdenticalSources', () => {
     const sources: SourceDto[] = [
       {
         title: 'Source 1',
-        extensionName: '1',
+        extensionExternalId: '1',
         document: { uri: 'systemA', mimeType: 'text/plain' },
         chunk: { uri: 'file1', mimeType: 'text/plain', content: '' },
         metadata: { key1: 'value1' },
       },
       {
         title: 'Source 1',
-        extensionName: '1',
+        extensionExternalId: '1',
         document: { uri: 'systemA', mimeType: 'text/plain' },
         chunk: { uri: 'file1', mimeType: 'text/plain', content: '' },
         metadata: { key1: 'value1', key2: 'value2' },
@@ -324,7 +324,7 @@ describe('mergeIdenticalSources', () => {
           mimeType: 'text/plain',
           uri: 'systemA',
         },
-        extensionName: '1',
+        extensionExternalId: '1',
         metadata: {
           key1: 'value1',
           key2: 'value2',
@@ -339,14 +339,14 @@ describe('mergeIdenticalSources', () => {
     const sources: SourceDto[] = [
       {
         title: 'Source 1',
-        extensionName: '1',
+        extensionExternalId: '1',
         document: { uri: 'systemA', mimeType: 'text/plain' },
         chunk: { uri: 'file1', mimeType: 'text/plain', content: '' },
         metadata: { key1: 'value1', keyA: 'valueA' },
       },
       {
         title: 'Source 1',
-        extensionName: '1',
+        extensionExternalId: '1',
         document: { uri: 'systemA', mimeType: 'text/plain' },
         chunk: { uri: 'file1', mimeType: 'text/plain', content: '' },
         metadata: { key1: 'value1', keyB: 'valueB' },
@@ -365,7 +365,7 @@ describe('mergeIdenticalSources', () => {
           mimeType: 'text/plain',
           uri: 'systemA',
         },
-        extensionName: '1',
+        extensionExternalId: '1',
         metadata: {
           key1: 'value1',
           keyA: 'valueA',

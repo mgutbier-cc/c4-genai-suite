@@ -164,7 +164,7 @@ export class MigrateSourcesToNewFormat1750134137266 implements MigrationInterfac
 
                                                         new_source := jsonb_build_object(
                                                                 'title', COALESCE(old_source ->> 'title', ''),
-                                                                'extensionName', (select e."name" || '_' || e.id
+                                                                'extensionExternalId', (select e."name" || '_' || e.id
                                                                                   from files f
                                                                                            join bucket b ON b.id = f."bucketId"
                                                                                            join extensions e ON (e.values::jsonb ->> 'bucket')::integer = b.id
