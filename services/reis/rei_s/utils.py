@@ -11,7 +11,11 @@ from rei_s.prometheus_server import PrometheusHttpServer
 
 
 def get_uploaded_file_path(file_id: str):
-    return os.path.join(tempfile.gettempdir(), file_id)
+    joined_path = os.path.join(tempfile.gettempdir(), file_id)
+    normalized_path = os.path.normpath(joined_path)
+    if not normalized_path.startswith(tempfile.gettempdir()):
+        raise ValueError("Invalid file path")
+    return normalized_path
 
 
 async def startup_workers(app: FastAPI, workers: int):

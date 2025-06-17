@@ -4,6 +4,7 @@ from fastapi.testclient import TestClient
 from langchain_community.embeddings import FakeEmbeddings
 from rei_s.config import update_tempdir
 from rei_s.services.stores.devnull_store import DevNullStoreAdapter
+from rei_s.utils import get_uploaded_file_path
 from tests.unit.utils import env_value
 
 
@@ -59,3 +60,8 @@ def test_add_files_read_only(mocker, app, use_unknown_tmp_dir):
                 },
             )
         assert response.status_code == 500
+
+def test_path_traversal_attack():
+    # Test path traversal prevention
+    with pytest.raises(ValueError, match="Invalid file path"):
+        get_uploaded_file_path("../../../etc/passwd")
