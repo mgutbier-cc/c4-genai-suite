@@ -77,7 +77,7 @@ export class BedrockModelExtension implements Extension<BedrockConverseExtension
   getMiddlewares(_: User, extension: ExtensionEntity<BedrockConverseExtensionConfiguration>): Promise<ChatMiddleware[]> {
     const middleware = {
       invoke: async (context: ChatContext, getContext: GetContext, next: ChatNextDelegate): Promise<any> => {
-        context.llms[this.spec.name] = await context.cache.get(this.spec.name, extension.values.configuration, () => {
+        context.llms[this.spec.name] = await context.cache.get(this.spec.name, extension.values, () => {
           const callbacks = [getEstimatedUsageCallback('bedrock-ai', extension.values.model, getContext)];
 
           return this.createModel(extension.values, callbacks);

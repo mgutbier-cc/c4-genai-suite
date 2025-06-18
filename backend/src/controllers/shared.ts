@@ -161,10 +161,6 @@ export class SourceDto {
   @IsString()
   title!: string; // title of the source document
 
-  @ApiProperty({ description: 'Extension name for retrieving chunks or documents', required: true })
-  @IsString()
-  extensionExternalId!: string; // --> Extension.getChunks(uri: string[]); Extension.getDocument(uri: string)
-
   @ApiProperty({ description: 'Chunk information', required: true })
   @Type(() => ChunkDto)
   @ValidateNested()

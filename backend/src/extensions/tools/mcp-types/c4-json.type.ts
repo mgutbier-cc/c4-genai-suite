@@ -39,11 +39,10 @@ export const convertC4JsonToText = (type: C4JsonType): { type: 'text'; text: str
   return { type: 'text', text: type.data.original ?? type.data.text };
 };
 
-export const convertC4JsonToSource = (extensionExternalId: string, type: C4JsonType): Source => {
+export const convertC4JsonToSource = (type: C4JsonType): Source => {
   const metadata = type.data.metadata;
   return {
     title: type.data.metadata.title ?? type.data.id,
-    extensionExternalId,
     chunk: {
       content: type.data.original ?? type.data.text,
       pages: getDistinctPages(type.data.region),

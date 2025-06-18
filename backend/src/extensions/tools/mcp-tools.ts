@@ -380,9 +380,9 @@ export class MCPToolsExtension implements Extension<Configuration> {
                 this.logger.log(`Calling function ${name}`, { argument: argument });
                 const req: CallToolRequest = { method: 'tools/call', params: { name, arguments: argument } };
                 const res = await client.request(req, CallToolResultSchema);
-                const { sources, content } = transformMCPToolResponse(extension.externalId, res);
+                const { sources, content } = transformMCPToolResponse(res);
                 if (sources.length) {
-                  context.history?.addSources(sources);
+                  context.history?.addSources(extension.externalId, sources);
                 }
 
                 return content;

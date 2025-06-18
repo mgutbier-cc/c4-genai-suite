@@ -2,9 +2,8 @@ import { forwardRef, Inject, NotFoundException } from '@nestjs/common';
 import { IQueryHandler, QueryBus, QueryHandler } from '@nestjs/cqrs';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/domain/users';
-import { MessageEntity, MessageRepository } from '../../database';
+import { ExtensionSource, MessageEntity, MessageRepository } from '../../database';
 import { GetExtension, GetExtensionResponse } from '../../extensions';
-import { Source } from '../interfaces';
 
 export class GetDocumentContent {
   constructor(
@@ -28,7 +27,7 @@ export class GetDocumentContentHandler implements IQueryHandler<GetDocumentConte
     private readonly queryBus: QueryBus,
   ) {}
 
-  private async fetchContent(documentUri: string, sources: Source[]): Promise<string[]> {
+  private async fetchContent(documentUri: string, sources: ExtensionSource[]): Promise<string[]> {
     if (sources.length === 0 || sources.every((x) => x.chunk.content)) {
       return sources.map((x) => x.chunk.content);
     }

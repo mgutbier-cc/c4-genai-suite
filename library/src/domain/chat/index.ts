@@ -67,7 +67,7 @@ export interface AgentArgument {
 }
 
 export interface MessagesHistory {
-  addSources(sources: Source[]): void;
+  addSources(externalExtensionId: string, sources: Source[]): void;
 }
 
 export interface ChatContext {
@@ -309,23 +309,22 @@ export interface ChatMiddleware {
 export const CHAT_MIDDLEWARES_TOKEN = 'CHAT_MIDDLEWARES';
 
 export type Chunk = {
-  uri?: string | null; // s5q-chunk://{chunkId}, reis-chunk://{chunkId}
-  content: string; // the text representation of the chunk
+  uri?: string | null;
+  content: string;
   pages?: number[] | null;
   score: number;
 };
 
 export type Document = {
-  uri?: string | null; // 's5q-document://{documentId}', reis-document://{documentId}
+  uri?: string | null;
   name?: string | null;
-  mimeType: string; // application/pdf
+  mimeType: string;
   size?: number | null;
   link?: string | null;
 };
 
 export type Source = {
   title: string; // title of the source document
-  extensionExternalId: string;
   chunk: Chunk;
   document: Document;
   metadata?: Record<string, any> | null;

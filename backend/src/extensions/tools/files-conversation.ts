@@ -153,12 +153,7 @@ class InternalTool extends StructuredTool {
       const sources = this.showSources ?? false;
 
       if (sources && result.sources) {
-        this.context.history?.addSources(
-          result.sources.map((x) => ({
-            ...x,
-            extensionExternalId: this.name,
-          })),
-        );
+        this.context.history?.addSources(this.extensionExternalId, result.sources);
       }
 
       return JSON.stringify(result.files, undefined, 2);

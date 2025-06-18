@@ -11,7 +11,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { onErrorResumeNextWith } from 'rxjs';
 import { MoreThan } from 'typeorm';
-import { MessageEntity, MessageRepository } from 'src/domain/database';
+import { ExtensionSource, MessageEntity, MessageRepository } from 'src/domain/database';
 import { is } from 'src/lib';
 import { ChatContext, ChatMiddleware, ChatNextDelegate, GetContext, MessagesHistory, Source } from '../interfaces';
 
@@ -52,7 +52,7 @@ class InternalChatHistory extends BaseListChatMessageHistory implements Messages
   private readonly logger = new Logger(InternalChatHistory.name);
   private readonly tools: string[] = [];
   private readonly debug: string[] = [];
-  private sources: Source[] = [];
+  private sources: ExtensionSource[] = [];
   private stored?: BaseMessage[];
 
   lc_namespace!: string[];
@@ -74,8 +74,13 @@ class InternalChatHistory extends BaseListChatMessageHistory implements Messages
     });
   }
 
-  addSources(sources: Source[]): void {
-    this.sources.push(...sources);
+  addSources(extensionExternalId: string, sources: Source[]): void {
+    this.sources.push(
+      ...sources.map((source) => ({
+        ...source,
+        extensionExternalId,
+      })),
+    );
   }
 
   async getMessages(): Promise<BaseMessage[]> {
