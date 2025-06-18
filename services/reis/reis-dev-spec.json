@@ -439,11 +439,6 @@
             "title": "Content",
             "description": "The content of the chunk."
           },
-          "mimeType": {
-            "type": "string",
-            "title": "Mimetype",
-            "description": "The mime type of the chunk"
-          },
           "pages": {
             "anyOf": [
               {
@@ -469,7 +464,6 @@
         "required": [
           "uri",
           "content",
-          "mimeType",
           "pages",
           "score"
         ],

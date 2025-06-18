@@ -7,7 +7,6 @@ export type C4JsonType = {
     text: string;
     original?: string;
     id: string;
-    title?: string;
     score: number;
     region: {
       bounding_boxes?: {
@@ -22,6 +21,9 @@ export type C4JsonType = {
     metadata: {
       uri: string;
       mime_type: string;
+      link?: string;
+      size?: number;
+      title?: string;
       attributes?: {
         [key: string]: any;
       };
@@ -40,17 +42,18 @@ export const convertC4JsonToText = (type: C4JsonType): { type: 'text'; text: str
 export const convertC4JsonToSource = (extensionExternalId: string, type: C4JsonType): Source => {
   const metadata = type.data.metadata;
   return {
-    title: type.data.title ?? type.data.id,
+    title: type.data.metadata.title ?? type.data.id,
     extensionExternalId,
     chunk: {
       content: type.data.original ?? type.data.text,
-      mimeType: 'text/plain',
       pages: getDistinctPages(type.data.region),
       score: type.data.score,
     },
     document: {
       uri: type.data.metadata.uri,
       mimeType: type.data.metadata.mime_type,
+      link: type.data.metadata.link,
+      size: type.data.metadata.size,
     },
     metadata: metadata.attributes ?? {},
   };

@@ -249,7 +249,6 @@ def get_file_sources(results: List[Document]) -> List[SourceDto]:
             chunk=ChunkDto(
                 uri=doc.metadata.get("id") or doc.id or "",
                 content=doc.page_content,
-                mime_type="text/plain",
                 pages=parse_int_array(doc.metadata.get("page")),
                 score=length - i,
             ),

@@ -1,6 +1,5 @@
 /* eslint-disable react-refresh/only-export-components */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import isEqual from 'fast-deep-equal';
 import React, { useMemo } from 'react';
 import { SourceDto } from 'src/api';
 import Source from 'src/pages/chat/conversation/Source';
@@ -32,7 +31,7 @@ export const mergeIdenticalSources = (sources: SourceDto[]): SourceDto[] => {
   const uniqueSources: SourceDto[] = [];
 
   sources.forEach((source) => {
-    const alreadyAddedSource = uniqueSources.find((s) => isEqual(s.document, source.document));
+    const alreadyAddedSource = uniqueSources.find((s) => s.document.uri && s.document.uri === source.document.uri);
     source.metadata ??= {};
     source.metadata['pages'] = source.chunk.pages ?? [];
 

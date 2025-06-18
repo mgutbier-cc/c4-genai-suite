@@ -121,7 +121,6 @@ export class MigrateSourcesToNewFormat1750134137266 implements MigrationInterfac
                                                     'chunk', jsonb_build_object(
                                                             'uri', NULL,
                                                             'content', NULL,
-                                                            'mimeType', 'text/plain',
                                                             'pages', pages
                                                              ),
                                                     'document', jsonb_build_object(
@@ -173,7 +172,6 @@ export class MigrateSourcesToNewFormat1750134137266 implements MigrationInterfac
                                                                 'chunk', jsonb_build_object(
                                                                         'uri', COALESCE(chunk_id, NULL),
                                                                         'content', NULL,
-                                                                        'mimeType', 'text/plain',
                                                                         'pages', pages
                                                                          ),
                                                                 'document', jsonb_build_object(

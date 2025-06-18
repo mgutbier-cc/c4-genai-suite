@@ -131,7 +131,7 @@ class InternalChatHistory extends BaseListChatMessageHistory implements Messages
         id: this.conversationId,
       },
       data,
-      // The tools is used for the UI only to fdisplay the used tools for old conversations.
+      // The tools is used for the UI only to display the used tools for old conversations.
       tools: isAIMessage(message) ? this.tools : [],
       // The debug information are only relevant for AI messages.
       debug: isAIMessage(message) ? this.debug : [],

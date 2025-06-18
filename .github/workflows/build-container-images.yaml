@@ -16,6 +16,9 @@ jobs:
     strategy:
       matrix:
         service:
+          - name: bundled
+            containerfile: Containerfile
+            context: .
           - name: backend
             containerfile: Containerfile.backend
             context: .

@@ -1368,7 +1368,6 @@
         "properties": {
           "uri": { "type": "string", "description": "URI of the chunk (e.g., s5q-chunk://{chunkId}) or an id", "nullable": true },
           "content": { "type": "string", "description": "Text representation of the chunk" },
-          "mimeType": { "type": "string", "description": "MIME type of the chunk (e.g., text/plain)" },
           "pages": {
             "description": "Page reference, if applicable",
             "nullable": true,
@@ -1376,7 +1375,7 @@
             "items": { "type": "number" }
           }
         },
-        "required": ["content", "mimeType"]
+        "required": ["content"]
       },
       "DocumentDto": {
         "type": "object",

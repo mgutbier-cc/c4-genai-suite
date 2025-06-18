@@ -32,12 +32,6 @@ export interface ChunkDto {
      */
     content: string;
     /**
-     * The mime type of the chunk
-     * @type {string}
-     * @memberof ChunkDto
-     */
-    mimeType: string;
-    /**
      * 
      * @type {Array<number>}
      * @memberof ChunkDto
@@ -57,7 +51,6 @@ export interface ChunkDto {
 export function instanceOfChunkDto(value: object): value is ChunkDto {
     if (!('uri' in value) || value['uri'] === undefined) return false;
     if (!('content' in value) || value['content'] === undefined) return false;
-    if (!('mimeType' in value) || value['mimeType'] === undefined) return false;
     if (!('pages' in value) || value['pages'] === undefined) return false;
     if (!('score' in value) || value['score'] === undefined) return false;
     return true;
@@ -75,7 +68,6 @@ export function ChunkDtoFromJSONTyped(json: any, ignoreDiscriminator: boolean): 
         
         'uri': json['uri'],
         'content': json['content'],
-        'mimeType': json['mimeType'],
         'pages': json['pages'],
         'score': json['score'],
     };
@@ -89,7 +81,6 @@ export function ChunkDtoToJSON(value?: ChunkDto | null): any {
         
         'uri': value['uri'],
         'content': value['content'],
-        'mimeType': value['mimeType'],
         'pages': value['pages'],
         'score': value['score'],
     };

@@ -33,12 +33,6 @@ export interface ChunkDto {
      */
     content: string;
     /**
-     * MIME type of the chunk (e.g., text/plain)
-     * @type {string}
-     * @memberof ChunkDto
-     */
-    mimeType: string;
-    /**
      * Page reference, if applicable
      * @type {Array<number>}
      * @memberof ChunkDto
@@ -51,7 +45,6 @@ export interface ChunkDto {
  */
 export function instanceOfChunkDto(value: object): value is ChunkDto {
     if (!('content' in value) || value['content'] === undefined) return false;
-    if (!('mimeType' in value) || value['mimeType'] === undefined) return false;
     return true;
 }
 
@@ -67,7 +60,6 @@ export function ChunkDtoFromJSONTyped(json: any, ignoreDiscriminator: boolean): 
         
         'uri': json['uri'] == null ? undefined : json['uri'],
         'content': json['content'],
-        'mimeType': json['mimeType'],
         'pages': json['pages'] == null ? undefined : json['pages'],
     };
 }
@@ -80,7 +72,6 @@ export function ChunkDtoToJSON(value?: ChunkDto | null): any {
         
         'uri': value['uri'],
         'content': value['content'],
-        'mimeType': value['mimeType'],
         'pages': value['pages'],
     };
 }

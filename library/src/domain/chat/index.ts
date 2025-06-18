@@ -311,7 +311,6 @@ export const CHAT_MIDDLEWARES_TOKEN = 'CHAT_MIDDLEWARES';
 export type Chunk = {
   uri?: string | null; // s5q-chunk://{chunkId}, reis-chunk://{chunkId}
   content: string; // the text representation of the chunk
-  mimeType: string; // text/plain
   pages?: number[] | null;
   score: number;
 };

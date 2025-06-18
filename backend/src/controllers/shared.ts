@@ -120,10 +120,6 @@ export class ChunkDto {
   @IsString()
   content!: string;
 
-  @ApiProperty({ description: 'MIME type of the chunk (e.g., text/plain)', required: true })
-  @IsString()
-  mimeType!: string;
-
   @ApiProperty({ description: 'Page reference, if applicable', nullable: true, required: false, type: [Number] })
   @IsNumber()
   @IsArray()
@@ -165,10 +161,8 @@ export class SourceDto {
   @IsString()
   title!: string; // title of the source document
 
-  //sourceEndpoint!: string; // 'http://sherloq-cccc/sse'
-  // or
   @ApiProperty({ description: 'Extension name for retrieving chunks or documents', required: true })
-  @IsNumber()
+  @IsString()
   extensionExternalId!: string; // --> Extension.getChunks(uri: string[]); Extension.getDocument(uri: string)
 
   @ApiProperty({ description: 'Chunk information', required: true })

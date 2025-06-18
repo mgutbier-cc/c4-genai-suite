@@ -127,13 +127,13 @@ function createMessageEntity(repository: Repository<MessageEntity>) {
       extensionExternalId: '',
       title: '',
       document: { uri: '1', mimeType: 'text/plain' },
-      chunk: { uri: '1', mimeType: 'text/plain', content: 'content1', pages: [], score: 0 },
+      chunk: { uri: '1', content: 'content1', pages: [], score: 0 },
     },
     {
       extensionExternalId: '',
       title: '',
       document: { uri: '1', mimeType: 'text/plain' },
-      chunk: { uri: '1', mimeType: 'text/plain', content: 'content2', pages: [], score: 0 },
+      chunk: { uri: '1', content: 'content2', pages: [], score: 0 },
     },
   ];
 
