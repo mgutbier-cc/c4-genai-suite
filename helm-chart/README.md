@@ -394,7 +394,7 @@ The new `frontend.*` settings are optional and only needed when customizing:
 - Extra volumes and volume mounts
 - Pod resources
 
-## 7.0.0 to 7.1.0
+## 7.0.0 to 8.0.0
 
 The Helm Chart has been renamed to `c4-genai-suite`. As a result, you cannot upgrade an existing installation using
 `helm upgrade`. However, because the chart’s components are stateless, you can install the new chart alongside the old

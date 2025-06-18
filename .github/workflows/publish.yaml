@@ -120,4 +120,4 @@ jobs:
       - name: Package and Push Helm Chart
         run: |
           helm package helm-chart/
-          helm push cccc-*.tgz oci://ghcr.io/${{ github.repository }}/charts/
+          helm push c4-genai-suite-*.tgz oci://ghcr.io/${{ github.repository }}/charts/
