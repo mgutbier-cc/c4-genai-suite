@@ -41,3 +41,5 @@ jobs:
           tags: ghcr.io/${{ github.repository }}/${{ matrix.service.name }}:commit-${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+          build-args: |
+            VERSION=${{ github.sha }}
