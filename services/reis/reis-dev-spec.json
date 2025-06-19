@@ -649,7 +649,14 @@
             "description": "The chunk."
           },
           "document": {
-            "$ref": "#/components/schemas/DocumentDto",
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DocumentDto"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "description": "The document."
           },
           "metadata": {

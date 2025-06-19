@@ -51,19 +51,19 @@ describe('mergeIdenticalSources', () => {
       {
         title: 'Source 1',
         document: { uri: 'systemA', mimeType: 'text/plain' },
-        chunk: { uri: null, pages: [1, 3, 5], content: '' },
+        chunk: { pages: [1, 3, 5], content: '' },
         metadata: {},
       },
       {
         title: 'Source 2',
         document: { uri: 'systemB', mimeType: 'text/plain' },
-        chunk: { uri: null, pages: [5, 4, 1], content: '' },
+        chunk: { pages: [5, 4, 1], content: '' },
         metadata: {},
       },
       {
         title: 'Source 1',
         document: { uri: 'systemA', mimeType: 'text/plain' },
-        chunk: { uri: null, pages: [2, 4, 6], content: '' },
+        chunk: { pages: [2, 4, 6], content: '' },
         metadata: {},
       },
     ];
@@ -74,7 +74,6 @@ describe('mergeIdenticalSources', () => {
         chunk: {
           content: '',
           pages: [1, 3, 5],
-          uri: null,
         },
         document: {
           mimeType: 'text/plain',
@@ -89,7 +88,6 @@ describe('mergeIdenticalSources', () => {
         chunk: {
           content: '',
           pages: [5, 4, 1],
-          uri: null,
         },
         document: {
           mimeType: 'text/plain',

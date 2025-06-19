@@ -45,11 +45,11 @@ export interface SourceDto {
      */
     chunk: ChunkDto;
     /**
-     * The document.
+     * 
      * @type {DocumentDto}
      * @memberof SourceDto
      */
-    document: DocumentDto;
+    document: DocumentDto | null;
     /**
      * 
      * @type {{ [key: string]: any; }}

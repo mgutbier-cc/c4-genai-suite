@@ -22,7 +22,7 @@ class DocumentDto(BaseModel):
 class SourceDto(BaseModel):
     title: str = Field(description="The title of the source.")
     chunk: ChunkDto = Field(description="The chunk.")
-    document: DocumentDto = Field(description="The document.")
+    document: Optional[DocumentDto] = Field(description="The document.")
     metadata: Optional[Dict[str, Any]] = Field(None, description="Additional metadata about the source.")
     model_config = ConfigDict(alias_generator=to_camel, populate_by_name=True)
 

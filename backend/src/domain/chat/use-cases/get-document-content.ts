@@ -55,7 +55,7 @@ export class GetDocumentContentHandler implements IQueryHandler<GetDocumentConte
       throw new NotFoundException(`Cannot find a message with id ${query.messageId} for this user`);
     }
 
-    const references = message.sources?.filter((x) => x.document.uri === query.documentUri);
+    const references = message.sources?.filter((x) => x.document?.uri === query.documentUri);
     if (!references?.length) {
       throw new NotFoundException(`Cannot find a document with uri ${query.documentUri} for this user`);
     }

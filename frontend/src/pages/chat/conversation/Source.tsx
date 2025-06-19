@@ -13,7 +13,7 @@ const Source: React.FC<{
 
   const hasMetadata = metadataEntries.length > 0;
   const toggle = () => setIsExpanded((e) => !e);
-  const sourceChunksAvailable = !!source.document.uri;
+  const sourceChunksAvailable = !!source.document?.uri;
   return (
     <li className="mb-1 cursor-pointer rounded p-2 hover:bg-gray-100" onClick={toggle}>
       <div className="flex items-center justify-between text-sm">
@@ -25,7 +25,7 @@ const Source: React.FC<{
             <Anchor
               size="sm"
               onClick={(e) => {
-                selectDocument(source.document.uri ?? '');
+                selectDocument(source.document?.uri ?? '');
                 e.stopPropagation();
               }}
             >

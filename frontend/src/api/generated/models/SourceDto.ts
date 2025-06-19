@@ -50,7 +50,7 @@ export interface SourceDto {
      * @type {DocumentDto}
      * @memberof SourceDto
      */
-    document: DocumentDto;
+    document?: DocumentDto;
     /**
      * Additional metadata about the source.
      * @type {{ [key: string]: any; }}
@@ -65,7 +65,6 @@ export interface SourceDto {
 export function instanceOfSourceDto(value: object): value is SourceDto {
     if (!('title' in value) || value['title'] === undefined) return false;
     if (!('chunk' in value) || value['chunk'] === undefined) return false;
-    if (!('document' in value) || value['document'] === undefined) return false;
     return true;
 }
 
@@ -81,7 +80,7 @@ export function SourceDtoFromJSONTyped(json: any, ignoreDiscriminator: boolean):
         
         'title': json['title'],
         'chunk': ChunkDtoFromJSON(json['chunk']),
-        'document': DocumentDtoFromJSON(json['document']),
+        'document': json['document'] == null ? undefined : DocumentDtoFromJSON(json['document']),
         'metadata': json['metadata'] == null ? undefined : json['metadata'],
     };
 }

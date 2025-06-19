@@ -316,7 +316,7 @@ export type Chunk = {
 };
 
 export type Document = {
-  uri?: string | null;
+  uri: string;
   name?: string | null;
   mimeType: string;
   size?: number | null;
@@ -326,7 +326,7 @@ export type Document = {
 export type Source = {
   title: string; // title of the source document
   chunk: Chunk;
-  document: Document;
+  document?: Document | null;
   metadata?: Record<string, any> | null;
 };
 

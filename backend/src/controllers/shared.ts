@@ -109,19 +109,19 @@ export const MessageContentDto: SchemaObject = {
 export class ChunkDto {
   @ApiProperty({
     description: 'URI of the chunk (e.g., s5q-chunk://{chunkId}) or an id',
-    nullable: true,
     required: false,
     type: 'string',
   })
   @IsString()
+  @IsOptional()
   uri?: string | null;
 
-  @ApiProperty({ description: 'Text representation of the chunk', required: true })
+  @ApiProperty({ description: 'Text representation of the chunk', required: true, type: 'string' })
   @IsString()
   content!: string;
 
-  @ApiProperty({ description: 'Page reference, if applicable', nullable: true, required: false, type: [Number] })
-  @IsNumber()
+  @ApiProperty({ description: 'Page reference, if applicable', required: false, type: [Number] })
+  @IsNumber({}, { each: true })
   @IsArray()
   @IsOptional()
   pages?: number[] | null;
@@ -130,46 +130,46 @@ export class ChunkDto {
 export class DocumentDto {
   @ApiProperty({
     description: 'URI of the document (e.g., s5q-document://{documentId}) or an id',
-    nullable: true,
-    required: false,
-    type: 'string',
+    required: true,
   })
   @IsString()
-  uri?: string | null;
+  uri!: string;
 
-  @ApiProperty({ description: 'Name of the document', nullable: true, required: false, type: 'string' })
+  @ApiProperty({ description: 'Name of the document', required: false, type: 'string' })
   @IsString()
+  @IsOptional()
   name?: string | null;
 
-  @ApiProperty({ description: 'MIME type of the document (e.g., application/pdf)', required: true })
+  @ApiProperty({ description: 'MIME type of the document (e.g., application/pdf)', required: true, type: 'string' })
   @IsString()
   mimeType!: string;
 
-  @ApiProperty({ description: 'Size of the document in bytes', nullable: true, required: false, type: 'number' })
+  @ApiProperty({ description: 'Size of the document in bytes', required: false, type: 'number' })
   @IsNumber()
   @IsOptional()
   size?: number | null;
 
-  @ApiProperty({ description: 'Link to the document, if available', nullable: true, required: false, type: 'string' })
+  @ApiProperty({ description: 'Link to the document, if available', required: false, type: 'string' })
   @IsString()
   @IsOptional()
   link?: string | null;
 }
 
 export class SourceDto {
-  @ApiProperty({ description: 'The title of the source.', required: true })
+  @ApiProperty({ description: 'The title of the source.', required: true, type: 'string' })
   @IsString()
   title!: string; // title of the source document
 
-  @ApiProperty({ description: 'Chunk information', required: true })
+  @ApiProperty({ description: 'Chunk information', required: true, type: ChunkDto })
   @Type(() => ChunkDto)
   @ValidateNested()
   chunk!: ChunkDto;
 
-  @ApiProperty({ description: 'Document information', required: true })
+  @ApiProperty({ description: 'Document information', required: false, type: DocumentDto })
   @Type(() => DocumentDto)
   @ValidateNested()
-  document!: DocumentDto;
+  @IsOptional()
+  document?: DocumentDto | null;
 
   @ApiProperty({
     description: 'Additional metadata about the source.',

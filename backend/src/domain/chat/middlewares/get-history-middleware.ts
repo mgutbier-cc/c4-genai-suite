@@ -117,16 +117,18 @@ class InternalChatHistory extends BaseListChatMessageHistory implements Messages
   }
 
   private publishSourcesReferences() {
-    this.context.result.next({
-      type: 'sources',
-      content: this.sources.map((source) => ({
-        ...source,
-        chunk: {
-          ...source.chunk,
-          content: '',
-        },
-      })),
-    });
+    if (this.sources.length > 0) {
+      this.context.result.next({
+        type: 'sources',
+        content: this.sources.map((source) => ({
+          ...source,
+          chunk: {
+            ...source.chunk,
+            content: '',
+          },
+        })),
+      });
+    }
   }
 
   async addMessage(message: BaseMessage, persistHuman?: boolean, editMessageId?: number): Promise<void> {

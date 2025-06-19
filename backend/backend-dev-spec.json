@@ -1366,31 +1366,22 @@
       "ChunkDto": {
         "type": "object",
         "properties": {
-          "uri": { "type": "string", "description": "URI of the chunk (e.g., s5q-chunk://{chunkId}) or an id", "nullable": true },
+          "uri": { "type": "string", "description": "URI of the chunk (e.g., s5q-chunk://{chunkId}) or an id" },
           "content": { "type": "string", "description": "Text representation of the chunk" },
-          "pages": {
-            "description": "Page reference, if applicable",
-            "nullable": true,
-            "type": "array",
-            "items": { "type": "number" }
-          }
+          "pages": { "description": "Page reference, if applicable", "type": "array", "items": { "type": "number" } }
         },
         "required": ["content"]
       },
       "DocumentDto": {
         "type": "object",
         "properties": {
-          "uri": {
-            "type": "string",
-            "description": "URI of the document (e.g., s5q-document://{documentId}) or an id",
-            "nullable": true
-          },
-          "name": { "type": "string", "description": "Name of the document", "nullable": true },
+          "uri": { "type": "string", "description": "URI of the document (e.g., s5q-document://{documentId}) or an id" },
+          "name": { "type": "string", "description": "Name of the document" },
           "mimeType": { "type": "string", "description": "MIME type of the document (e.g., application/pdf)" },
-          "size": { "type": "number", "description": "Size of the document in bytes", "nullable": true },
-          "link": { "type": "string", "description": "Link to the document, if available", "nullable": true }
+          "size": { "type": "number", "description": "Size of the document in bytes" },
+          "link": { "type": "string", "description": "Link to the document, if available" }
         },
-        "required": ["mimeType"]
+        "required": ["uri", "mimeType"]
       },
       "SourceDto": {
         "type": "object",
@@ -1400,7 +1391,7 @@
           "document": { "description": "Document information", "allOf": [{ "$ref": "#/components/schemas/DocumentDto" }] },
           "metadata": { "type": "object", "description": "Additional metadata about the source.", "additionalProperties": true }
         },
-        "required": ["title", "chunk", "document"]
+        "required": ["title", "chunk"]
       },
       "StreamSourcesEvent": {
         "type": "object",

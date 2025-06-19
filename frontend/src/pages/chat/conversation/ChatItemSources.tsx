@@ -31,7 +31,7 @@ export const mergeIdenticalSources = (sources: SourceDto[]): SourceDto[] => {
   const uniqueSources: SourceDto[] = [];
 
   sources.forEach((source) => {
-    const alreadyAddedSource = uniqueSources.find((s) => s.document.uri && s.document.uri === source.document.uri);
+    const alreadyAddedSource = uniqueSources.find((s) => s.document?.uri && s.document.uri === source.document?.uri);
     source.metadata ??= {};
     source.metadata['pages'] = source.chunk.pages ?? [];
 

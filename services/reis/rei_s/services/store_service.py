@@ -125,6 +125,7 @@ def generate_batches(
                             metadata={
                                 **x.metadata,
                                 "format": format_.name,
+                                "mime_type": file.mime_type,
                                 "doc_id": doc_id,
                                 "bucket": bucket,
                                 "source": file.file_name,
@@ -255,7 +256,7 @@ def get_file_sources(results: List[Document]) -> List[SourceDto]:
             document=DocumentDto(
                 uri=doc.metadata.get("doc_id", ""),
                 name=doc.metadata.get("source", "Unknown Filename"),
-                mime_type=doc.metadata.get("format", ""),
+                mime_type=doc.metadata.get("mime_type", ""),
                 link=doc.metadata.get("link"),
             ),
             metadata={key: value for key, value in doc.metadata.items() if key not in {"page", "id", "doc_id"}},

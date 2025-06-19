@@ -208,9 +208,7 @@ class InternalTool extends StructuredTool {
 
       if (result.sources) {
         this.context.history?.addSources(this.extensionExternalId, result.sources);
-      }
-
-      if (result.debug) {
+      } else if (result.debug) {
         this.context.result.next({ type: 'debug', content: result.debug });
       }
 

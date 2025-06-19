@@ -25,7 +25,7 @@ export interface ChunkDto {
      * @type {string}
      * @memberof ChunkDto
      */
-    uri?: string | null;
+    uri?: string;
     /**
      * Text representation of the chunk
      * @type {string}
@@ -37,7 +37,7 @@ export interface ChunkDto {
      * @type {Array<number>}
      * @memberof ChunkDto
      */
-    pages?: Array<number> | null;
+    pages?: Array<number>;
 }
 
 /**

@@ -25,13 +25,13 @@ export interface DocumentDto {
      * @type {string}
      * @memberof DocumentDto
      */
-    uri?: string | null;
+    uri: string;
     /**
      * Name of the document
      * @type {string}
      * @memberof DocumentDto
      */
-    name?: string | null;
+    name?: string;
     /**
      * MIME type of the document (e.g., application/pdf)
      * @type {string}
@@ -43,19 +43,20 @@ export interface DocumentDto {
      * @type {number}
      * @memberof DocumentDto
      */
-    size?: number | null;
+    size?: number;
     /**
      * Link to the document, if available
      * @type {string}
      * @memberof DocumentDto
      */
-    link?: string | null;
+    link?: string;
 }
 
 /**
  * Check if a given object implements the DocumentDto interface.
  */
 export function instanceOfDocumentDto(value: object): value is DocumentDto {
+    if (!('uri' in value) || value['uri'] === undefined) return false;
     if (!('mimeType' in value) || value['mimeType'] === undefined) return false;
     return true;
 }
@@ -70,7 +71,7 @@ export function DocumentDtoFromJSONTyped(json: any, ignoreDiscriminator: boolean
     }
     return {
         
-        'uri': json['uri'] == null ? undefined : json['uri'],
+        'uri': json['uri'],
         'name': json['name'] == null ? undefined : json['name'],
         'mimeType': json['mimeType'],
         'size': json['size'] == null ? undefined : json['size'],
