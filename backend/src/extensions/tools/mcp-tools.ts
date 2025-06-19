@@ -62,7 +62,13 @@ export class NamedDynamicStructuredTool extends DynamicStructuredTool {
   }
 }
 
-function toExtensionArgument(schema: JsonSchemaObject & { title?: string; description?: string }): ExtensionArgument | undefined {
+// zod has no password type since it is handled as string so we introduce a whitelist to map password fields
+const passwordKeys = ['apiKey', 'api-key', 'password', 'credentials'];
+
+function toExtensionArgument(
+  schema: JsonSchemaObject & { title?: string; description?: string },
+  attributeKey?: string,
+): ExtensionArgument | undefined {
   if (schema.type === 'number' || schema.type === 'integer') {
     return {
       type: 'number',
@@ -73,11 +79,13 @@ function toExtensionArgument(schema: JsonSchemaObject & { title?: string; descri
       required: false,
     };
   } else if (schema.type === 'string') {
+    const format = attributeKey && passwordKeys.includes(attributeKey) ? 'password' : (schema.format as 'input');
+
     return {
       type: 'string',
       title: '',
       enum: schema.enum as string[],
-      format: schema.format as 'input',
+      format,
       required: false,
     };
   } else if (schema.type === 'boolean') {
@@ -93,7 +101,7 @@ function toExtensionArgument(schema: JsonSchemaObject & { title?: string; descri
       required: false,
       properties: Object.entries(schema.properties ?? {}).reduce(
         (prev, [key, type]) => {
-          const propertyType = toExtensionArgument(type as JsonSchemaObject);
+          const propertyType = toExtensionArgument(type as JsonSchemaObject, key);
           if (propertyType) {
             prev[key] = propertyType;
           }
@@ -113,6 +121,7 @@ function toExtensionArgument(schema: JsonSchemaObject & { title?: string; descri
       title: '',
       required: false,
       items: arrayItemType,
+      default: schema.default as any[],
     };
   }
 }
@@ -124,7 +133,7 @@ function toArguments(i18n: I18nService, tools: MCPListToolsResultSchema['tools']
       toolObject.properties[tool.name] = Object.entries(methodSchema.properties ?? {}).reduce(
         (methodObject, [name, type]) => {
           const methodType = type as JsonSchemaObject;
-          const innerMethodType = toExtensionArgument(methodType);
+          const innerMethodType = toExtensionArgument(methodType, name);
           if (!innerMethodType) {
             return methodObject;
           }
@@ -392,9 +401,11 @@ export class MCPToolsExtension implements Extension<Configuration> {
                 const adminArgs = this.applyTemplates(context, this.getTemplateArgs(attributes, 'admin'));
                 const llmArgs = this.applyTemplates(context, this.getTemplateArgs(attributes, 'llm'), args);
                 const userArgs = this.applyTemplates(context, this.getTemplateArgs(attributes, 'user'), userDefinedArgs);
-                const argument = { ...llmArgs, ...adminArgs, ...userArgs };
-                this.logger.log(`Calling function ${name}`, { argument: argument });
-                const req: CallToolRequest = { method: 'tools/call', params: { name, arguments: argument } };
+                this.logger.log(`Calling function ${name}`);
+                const req: CallToolRequest = {
+                  method: 'tools/call',
+                  params: { name, arguments: { ...llmArgs, ...adminArgs, ...userArgs } },
+                };
                 const res = await client.request(req, CallToolResultSchema);
                 const { sources, content } = transformMCPToolResponse(res);
                 if (sources.length) {
