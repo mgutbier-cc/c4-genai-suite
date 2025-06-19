@@ -22,6 +22,17 @@ enum Transport {
   STREAMABLE_HTTP = 'streamableHttp',
 }
 
+type ConfigurationAttributeSource = 'llm' | 'user' | 'admin';
+
+type ConfigurationAttributes = Record<
+  // one record per value
+  string,
+  {
+    source: ConfigurationAttributeSource;
+    value: any;
+  }
+>;
+
 interface Configuration {
   serverName: string;
   endpoint: string;
@@ -32,14 +43,7 @@ interface Configuration {
     {
       enabled: boolean;
       description?: string;
-      attributes?: Record<
-        // one record per value
-        string,
-        {
-          source: 'llm' | 'user' | 'admin';
-          value: any;
-        }
-      >;
+      attributes?: ConfigurationAttributes;
     }
   >;
 }
@@ -327,6 +331,33 @@ export class MCPToolsExtension implements Extension<Configuration> {
     });
   }
 
+  private applyTemplates(context: ChatContext, templateArgs: Record<string, any>, args?: Record<string, any>) {
+    const templateKeys = Object.keys(templateArgs);
+
+    return Object.fromEntries(
+      Object.entries(args ?? templateArgs).map(([key, value]) => [
+        key,
+        typeof value === 'string' && typeof templateArgs[key] === 'string' && templateArgs[key]
+          ? renderString(templateArgs[key], {
+              ...context,
+              language: this.i18n.language,
+              value,
+            })
+          : templateKeys.includes(key)
+            ? value
+            : undefined,
+      ]),
+    );
+  }
+
+  private getTemplateArgs(attributes: ConfigurationAttributes, source: ConfigurationAttributeSource) {
+    return Object.fromEntries(
+      Object.entries(attributes)
+        .filter(([_, attribute]) => attribute.source === source)
+        .map(([key, attribute]) => [key, attribute.value ?? null]),
+    );
+  }
+
   async getMiddlewares(
     _user: User,
     extension: ExtensionEntity<Configuration>,
@@ -343,16 +374,12 @@ export class MCPToolsExtension implements Extension<Configuration> {
           ...filteredTools.map(({ name, description, inputSchema }) => {
             const params = schemaData[name];
             const schema = inputSchema as JsonSchemaObject;
+            // only expose attributes that are configured to be defined by the llm
             schema.properties = Object.fromEntries(
               Object.entries(schema.properties ?? {}).filter(([key]) => params.attributes?.[key]?.source === 'llm'),
             );
-            const templateAdminArgs = Object.fromEntries(
-              Object.entries(params.attributes ?? {})
-                .filter((entry) => entry[1].source === 'admin')
-                .map(([key, value]) => [key, value.value]),
-            );
-            const userDefined = userArgs?.[name] ?? {};
 
+            const userDefinedArgs = userArgs?.[name] ?? {};
             const displayName = `${extension.values.serverName}: ${name}`;
 
             return new NamedDynamicStructuredTool({
@@ -361,22 +388,11 @@ export class MCPToolsExtension implements Extension<Configuration> {
               description: params.description || description || name,
               schema: jsonSchemaToZod(schema),
               func: async (args: Record<string, any>) => {
-                // allows templating the admin defined value based on context and original llmValue
-                const adminArgs = Object.fromEntries(
-                  Object.entries(templateAdminArgs).map(([key, value]) => [
-                    key,
-                    typeof value === 'string'
-                      ? renderString(value, {
-                          ...context,
-                          userArgs,
-                          language: this.i18n.language,
-                          llmValue: args[key] as string,
-                        })
-                      : value,
-                  ]),
-                );
-
-                const argument = { ...args, ...adminArgs, ...userDefined };
+                const attributes = params.attributes ?? {};
+                const adminArgs = this.applyTemplates(context, this.getTemplateArgs(attributes, 'admin'));
+                const llmArgs = this.applyTemplates(context, this.getTemplateArgs(attributes, 'llm'), args);
+                const userArgs = this.applyTemplates(context, this.getTemplateArgs(attributes, 'user'), userDefinedArgs);
+                const argument = { ...llmArgs, ...adminArgs, ...userArgs };
                 this.logger.log(`Calling function ${name}`, { argument: argument });
                 const req: CallToolRequest = { method: 'tools/call', params: { name, arguments: argument } };
                 const res = await client.request(req, CallToolResultSchema);
