@@ -3,14 +3,21 @@ import { DynamicStructuredTool } from '@langchain/core/tools';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { SSEClientTransport } from '@modelcontextprotocol/sdk/client/sse.js';
 import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js';
-import { CallToolRequest, CallToolResultSchema, ListToolsResultSchema } from '@modelcontextprotocol/sdk/types.js';
+import { CallToolRequest, CallToolResultSchema, ListToolsResultSchema, McpError } from '@modelcontextprotocol/sdk/types.js';
 import { JsonSchemaObject, jsonSchemaToZod } from '@n8n/json-schema-to-zod';
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { diff } from 'json-diff-ts';
 import { renderString } from 'nunjucks';
 import { z } from 'zod';
 import { ChatContext, ChatMiddleware, ChatNextDelegate, GetContext } from 'src/domain/chat';
-import { Extension, ExtensionArgument, ExtensionEntity, ExtensionObjectArgument, ExtensionSpec } from 'src/domain/extensions';
+import {
+  Extension,
+  ExtensionArgument,
+  ExtensionEntity,
+  ExtensionObjectArgument,
+  ExtensionSpec,
+  ExtensionStringArgument,
+} from 'src/domain/extensions';
 import { User } from 'src/domain/users';
 import { I18nService } from '../../localization/i18n.service';
 import { transformMCPToolResponse } from './mcp-types/transformer';
@@ -192,14 +199,16 @@ function toUserArguments(values: Configuration, schemaArgument: ExtensionObjectA
   return Object.entries(values.schema ?? {}).reduce(
     (userArguments, [methodName, methodConfig]) => {
       if (methodConfig.enabled) {
+        const schemaObjectArgument = schemaArgument.properties?.[methodName] as ExtensionObjectArgument;
+        const descriptionArgument = schemaObjectArgument?.properties?.['description'] as ExtensionStringArgument;
+        const attributesArgument = schemaObjectArgument?.properties?.['attributes'] as ExtensionObjectArgument;
         const methodArguments = {
           type: 'object',
           title: methodName,
+          description: methodConfig?.description || descriptionArgument.default || '',
           properties: Object.entries(methodConfig.attributes ?? {}).reduce(
             (prev, [key, value]) => {
               if (value.source === 'user') {
-                const schemaObjectArgument = schemaArgument.properties?.[methodName] as ExtensionObjectArgument;
-                const attributesArgument = schemaObjectArgument?.properties?.['attributes'] as ExtensionObjectArgument;
                 const parameterArgument = attributesArgument?.properties?.[key] as ExtensionObjectArgument;
                 const valuesArguments = parameterArgument?.properties?.['value'];
                 if (valuesArguments) {
@@ -303,7 +312,12 @@ export class MCPToolsExtension implements Extension<Configuration> {
       }
 
       spec.arguments['schema'] = toArguments(this.i18n, state.tools);
-      spec.userArguments = toUserArguments(values, spec.arguments['schema']);
+      spec.userArguments = {
+        type: 'object',
+        title: values.serverName,
+        description: '',
+        properties: toUserArguments(values, spec.arguments['schema']),
+      };
     } catch (err) {
       const errorMessage = `Cannot connect to mcp tool`;
 
@@ -402,17 +416,33 @@ export class MCPToolsExtension implements Extension<Configuration> {
                 const llmArgs = this.applyTemplates(context, this.getTemplateArgs(attributes, 'llm'), args);
                 const userArgs = this.applyTemplates(context, this.getTemplateArgs(attributes, 'user'), userDefinedArgs);
                 this.logger.log(`Calling function ${name}`);
-                const req: CallToolRequest = {
-                  method: 'tools/call',
-                  params: { name, arguments: { ...llmArgs, ...adminArgs, ...userArgs } },
-                };
-                const res = await client.request(req, CallToolResultSchema);
-                const { sources, content } = transformMCPToolResponse(res);
-                if (sources.length) {
-                  context.history?.addSources(extension.externalId, sources);
-                }
 
-                return content;
+                try {
+                  const req: CallToolRequest = {
+                    method: 'tools/call',
+                    params: { name, arguments: { ...llmArgs, ...adminArgs, ...userArgs } },
+                  };
+                  const res = await client.request(req, CallToolResultSchema);
+                  console.log({ content: res.content });
+                  const { sources, content } = transformMCPToolResponse(res);
+                  if (sources.length) {
+                    context.history?.addSources(extension.externalId, sources);
+                  }
+
+                  return content;
+                } catch (err) {
+                  context.result.next({
+                    type: 'debug',
+                    content: this.i18n.t('texts.extensions.mcpTools.errorToolCall', { tool: name }),
+                  });
+                  if (err instanceof McpError) {
+                    this.logger.error('mcpError during tool call', err);
+                    //TODO: handle mcp errors
+                  } else {
+                    this.logger.error('error during tool call', err);
+                  }
+                  throw err;
+                }
               },
             });
           }),

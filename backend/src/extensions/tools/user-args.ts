@@ -18,46 +18,51 @@ export class UserArgsExtension implements Extension {
       type: 'tool',
       arguments: {},
       userArguments: {
-        dateUserArgument: {
-          type: 'string',
-          title: this.i18n.t('texts.extensions.common.date'),
-          format: 'date',
-        },
-        stringUserArgument: {
-          type: 'string',
-          title: this.i18n.t('texts.extensions.common.string'),
-        },
-        multiSelectUserArgument: {
-          type: 'array',
-          title: this.i18n.t('texts.extensions.common.multiSelect'),
-          items: {
-            title: '',
+        type: 'object',
+        title: this.i18n.t('texts.extensions.userArgs.title'),
+        description: this.i18n.t('texts.extensions.userArgs.description'),
+        properties: {
+          dateUserArgument: {
             type: 'string',
-            enum: ['value1', 'value2', 'value3', 'value4', 'value5'],
+            title: this.i18n.t('texts.extensions.common.date'),
+            format: 'date',
           },
-          uniqueItems: true,
-          default: ['value2', 'value3'],
-        },
-        singleSelectUserArgument: {
-          type: 'string',
-          title: this.i18n.t('texts.extensions.common.singleSelect'),
-          format: 'select',
-          enum: ['value1', 'value2', 'value3', 'value4', 'value5'],
-          default: 'value4',
-        },
-        dateRangeUserArgument: {
-          type: 'object',
-          title: this.i18n.t('texts.extensions.common.dateRange'),
-          properties: {
-            from: {
+          stringUserArgument: {
+            type: 'string',
+            title: this.i18n.t('texts.extensions.common.string'),
+          },
+          multiSelectUserArgument: {
+            type: 'array',
+            title: this.i18n.t('texts.extensions.common.multiSelect'),
+            items: {
+              title: '',
               type: 'string',
-              title: this.i18n.t('texts.extensions.common.dateFrom'),
-              format: 'date',
+              enum: ['value1', 'value2', 'value3', 'value4', 'value5'],
             },
-            until: {
-              type: 'string',
-              title: this.i18n.t('texts.extensions.common.dateUntil'),
-              format: 'date',
+            uniqueItems: true,
+            default: ['value2', 'value3'],
+          },
+          singleSelectUserArgument: {
+            type: 'string',
+            title: this.i18n.t('texts.extensions.common.singleSelect'),
+            format: 'select',
+            enum: ['value1', 'value2', 'value3', 'value4', 'value5'],
+            default: 'value4',
+          },
+          dateRangeUserArgument: {
+            type: 'object',
+            title: this.i18n.t('texts.extensions.common.dateRange'),
+            properties: {
+              from: {
+                type: 'string',
+                title: this.i18n.t('texts.extensions.common.dateFrom'),
+                format: 'date',
+              },
+              until: {
+                type: 'string',
+                title: this.i18n.t('texts.extensions.common.dateUntil'),
+                format: 'date',
+              },
             },
           },
         },
@@ -66,7 +71,7 @@ export class UserArgsExtension implements Extension {
   }
 
   private getDefaultArgs() {
-    const userArguments = this.spec.userArguments ?? {};
+    const userArguments = this.spec.userArguments?.properties ?? {};
     const getDefault = (argument: ExtensionArgument) => {
       switch (argument.type) {
         case 'string':

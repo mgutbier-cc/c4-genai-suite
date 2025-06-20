@@ -146,7 +146,7 @@ export interface ExtensionSpec {
 
   arguments: { [name: string]: ExtensionArgument };
 
-  userArguments?: { [key: string]: ExtensionArgument };
+  userArguments?: ExtensionObjectArgument;
 
   triggers?: string[];
 }

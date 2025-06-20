@@ -62,17 +62,22 @@ export class FilesExtension<T extends FilesExtensionConfiguration = FilesExtensi
         },
       },
       userArguments: {
-        fileIdFilter: {
-          type: 'string',
-          title: this.i18n.t('texts.extensions.common.fileIds'),
-          format: 'c4-ui',
+        type: 'object',
+        title: this.i18n.t('texts.extensions.files.title'),
+        description: this.i18n.t('texts.extensions.files.description'),
+        properties: {
+          fileIdFilter: {
+            type: 'string',
+            title: this.i18n.t('texts.extensions.common.fileIds'),
+            format: 'c4-ui',
+          },
         },
       },
     };
   }
 
   private getDefaultArgs(): UserArgs {
-    const userArguments = this.spec.userArguments ?? {};
+    const userArguments = this.spec.userArguments?.properties ?? {};
     const getDefault = (argument: ExtensionArgument) => {
       switch (argument.type) {
         case 'string':

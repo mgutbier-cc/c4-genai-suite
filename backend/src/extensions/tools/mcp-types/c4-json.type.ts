@@ -1,5 +1,100 @@
 import { Source } from 'src/domain/chat';
 
+// Custom resource type for mcp responses
+/* SCHEMA:
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "required": ["kind", "version", "data"],
+  "properties": {
+    "kind": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string"
+    },
+    "data": {
+      "type": "object",
+      "required": ["text", "id", "score", "region", "metadata"],
+      "properties": {
+        "text": {
+          "type": "string"
+        },
+        "original": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "score": {
+          "type": "number"
+        },
+        "region": {
+          "type": "object",
+          "properties": {
+            "bounding_boxes": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["left", "top", "width", "height", "page"],
+                "properties": {
+                  "left": {
+                    "type": "number"
+                  },
+                  "top": {
+                    "type": "number"
+                  },
+                  "width": {
+                    "type": "number"
+                  },
+                  "height": {
+                    "type": "number"
+                  },
+                  "page": {
+                    "type": "number"
+                  }
+                }
+              }
+            },
+            "pages": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              }
+            }
+          }
+        },
+        "metadata": {
+          "type": "object",
+          "required": ["uri", "mime_type"],
+          "properties": {
+            "uri": {
+              "type": "string"
+            },
+            "mime_type": {
+              "type": "string"
+            },
+            "link": {
+              "type": "string"
+            },
+            "size": {
+              "type": "number"
+            },
+            "title": {
+              "type": "string"
+            },
+            "attributes": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          }
+        }
+      }
+    }
+  }
+}
+*/
+
 export type C4JsonType = {
   kind: string;
   version: string;

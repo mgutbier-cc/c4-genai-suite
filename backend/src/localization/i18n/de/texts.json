@@ -218,7 +218,8 @@
       "source": "Quelle",
       "sourceHint": "An welcher Stelle wird der Wert bestimmt.",
       "value": "Wert (Template)",
-      "valueHint": "Wert, der beim Toolaufruf verwendet wird."
+      "valueHint": "Wert, der beim Toolaufruf verwendet wird.",
+      "errorToolCall": "Es ist ein Fehler aufgetreten beim Aufruf des Tools '{tool}'"
     }
   },
   "chat": {
