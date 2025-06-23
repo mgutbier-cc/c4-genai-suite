@@ -21,7 +21,7 @@ import { mapValues } from '../runtime';
  */
 export interface ChunkDto {
     /**
-     * URI of the chunk (e.g., s5q-chunk://{chunkId}) or an id
+     * Uri or id of the chunk
      * @type {string}
      * @memberof ChunkDto
      */

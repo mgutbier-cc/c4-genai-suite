@@ -455,7 +455,7 @@
             "description": "The pages of the chunk inside the document."
           },
           "score": {
-            "type": "integer",
+            "type": "number",
             "title": "Score",
             "description": "The score of the result."
           }

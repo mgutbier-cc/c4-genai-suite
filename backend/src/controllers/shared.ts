@@ -108,7 +108,8 @@ export const MessageContentDto: SchemaObject = {
 
 export class ChunkDto {
   @ApiProperty({
-    description: 'URI of the chunk (e.g., s5q-chunk://{chunkId}) or an id',
+    description: 'Uri or id of the chunk',
+    example: 's5q-chunk://{chunkId})',
     required: false,
     type: 'string',
   })
@@ -129,7 +130,8 @@ export class ChunkDto {
 
 export class DocumentDto {
   @ApiProperty({
-    description: 'URI of the document (e.g., s5q-document://{documentId}) or an id',
+    description: 'Uri or id of the document',
+    example: 's5q-document://{documentId}',
     required: true,
   })
   @IsString()
@@ -140,7 +142,7 @@ export class DocumentDto {
   @IsOptional()
   name?: string | null;
 
-  @ApiProperty({ description: 'MIME type of the document (e.g., application/pdf)', required: true, type: 'string' })
+  @ApiProperty({ description: 'MIME type of the document', example: 'application/pdf', required: true, type: 'string' })
   @IsString()
   mimeType!: string;
 

@@ -7,7 +7,7 @@ class ChunkDto(BaseModel):
     uri: str = Field(description="Unique uri or id of the chunk.")
     content: str = Field(description="The content of the chunk.")
     pages: Optional[list[int]] = Field(description="The pages of the chunk inside the document.")
-    score: int = Field(description="The score of the result.")
+    score: float = Field(description="The score of the result.")
     model_config = ConfigDict(alias_generator=to_camel, populate_by_name=True)
 
 

@@ -423,7 +423,6 @@ export class MCPToolsExtension implements Extension<Configuration> {
                     params: { name, arguments: { ...llmArgs, ...adminArgs, ...userArgs } },
                   };
                   const res = await client.request(req, CallToolResultSchema);
-                  console.log({ content: res.content });
                   const { sources, content } = transformMCPToolResponse(res);
                   if (sources.length) {
                     context.history?.addSources(extension.externalId, sources);
@@ -437,7 +436,6 @@ export class MCPToolsExtension implements Extension<Configuration> {
                   });
                   if (err instanceof McpError) {
                     this.logger.error('mcpError during tool call', err);
-                    //TODO: handle mcp errors
                   } else {
                     this.logger.error('error during tool call', err);
                   }

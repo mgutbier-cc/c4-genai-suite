@@ -219,7 +219,7 @@
       "sourceHint": "Defines where the value should be defined.",
       "value": "Value (Template)",
       "valueHint": "Value that is used during tool call",
-      "errorToolCall": "Es ist ein Fehler aufgetreten beim Aufruf des Tools '{tool}'"
+      "errorToolCall": "An error occurred during the tool call '{tool}'"
     }
   },
   "chat": {

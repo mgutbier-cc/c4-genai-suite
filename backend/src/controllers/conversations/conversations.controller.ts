@@ -29,6 +29,8 @@ import {
   GetConversationResponse,
   GetConversations,
   GetConversationsResponse,
+  GetDocumentContent,
+  GetDocumentContentResponse,
   GetHistory,
   GetHistoryResponse,
   RateMessage,
@@ -40,7 +42,6 @@ import {
   UpdateConversation,
   UpdateConversationResponse,
 } from 'src/domain/chat';
-import { GetDocumentContent, GetDocumentContentResponse } from '../../domain/chat';
 import {
   ConfirmDto,
   ConversationDto,

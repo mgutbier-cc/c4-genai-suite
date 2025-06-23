@@ -1366,7 +1366,7 @@
       "ChunkDto": {
         "type": "object",
         "properties": {
-          "uri": { "type": "string", "description": "URI of the chunk (e.g., s5q-chunk://{chunkId}) or an id" },
+          "uri": { "type": "string", "description": "Uri or id of the chunk", "example": "s5q-chunk://{chunkId})" },
           "content": { "type": "string", "description": "Text representation of the chunk" },
           "pages": { "description": "Page reference, if applicable", "type": "array", "items": { "type": "number" } }
         },
@@ -1375,9 +1375,9 @@
       "DocumentDto": {
         "type": "object",
         "properties": {
-          "uri": { "type": "string", "description": "URI of the document (e.g., s5q-document://{documentId}) or an id" },
+          "uri": { "type": "string", "description": "Uri or id of the document", "example": "s5q-document://{documentId}" },
           "name": { "type": "string", "description": "Name of the document" },
-          "mimeType": { "type": "string", "description": "MIME type of the document (e.g., application/pdf)" },
+          "mimeType": { "type": "string", "description": "MIME type of the document", "example": "application/pdf" },
           "size": { "type": "number", "description": "Size of the document in bytes" },
           "link": { "type": "string", "description": "Link to the document, if available" }
         },

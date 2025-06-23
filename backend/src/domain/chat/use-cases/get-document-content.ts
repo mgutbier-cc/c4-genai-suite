@@ -28,11 +28,11 @@ export class GetDocumentContentHandler implements IQueryHandler<GetDocumentConte
   ) {}
 
   private async fetchContent(documentUri: string, sources: ExtensionSource[]): Promise<string[]> {
-    if (sources.length === 0 || sources.every((x) => x.chunk.content)) {
-      return sources.map((x) => x.chunk.content);
+    if (sources.length === 0 || sources.every((source) => source.chunk.content)) {
+      return sources.map((source) => source.chunk.content);
     }
 
-    const chunkUris = sources.map((x) => x.chunk.uri).filter((x) => !!x) as string[];
+    const chunkUris = sources.map((source) => source.chunk.uri).filter((source) => !!source) as string[];
     if (chunkUris.length === 0) {
       return [];
     }

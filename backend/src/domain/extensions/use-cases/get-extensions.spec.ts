@@ -85,7 +85,8 @@ describe(GetExtensionsHandler.name, () => {
           type: 'llm',
         },
         test,
-      } as unknown as Extension;
+        getMiddlewares: () => Promise.resolve([]),
+      } as Extension;
     });
 
     jest.spyOn(repository, 'find').mockImplementation(() => {

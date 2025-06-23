@@ -275,7 +275,6 @@ export interface Extension<
   // for dynamic specs
   buildSpec?(extension: ExtensionEntity<TConfig>, throwOnError: boolean, forceRebuild: boolean): Promise<ExtensionSpec>;
 
-  //TODO: instead of passing configuration to every method call, make the extensions stateful
   getChunks?(configuration: TConfig, documentUri: string, chunkUris: string[]): Promise<string[]>;
 
   fixedValues?: Partial<TConfig>;

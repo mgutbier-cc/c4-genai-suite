@@ -21,7 +21,7 @@ import { mapValues } from '../runtime';
  */
 export interface DocumentDto {
     /**
-     * URI of the document (e.g., s5q-document://{documentId}) or an id
+     * Uri or id of the document
      * @type {string}
      * @memberof DocumentDto
      */
@@ -33,7 +33,7 @@ export interface DocumentDto {
      */
     name?: string;
     /**
-     * MIME type of the document (e.g., application/pdf)
+     * MIME type of the document
      * @type {string}
      * @memberof DocumentDto
      */
