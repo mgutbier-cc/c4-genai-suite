@@ -6,7 +6,6 @@
   "private": true,
   "license": "Apache-2.0",
   "scripts": {
-    "prepare": "cd ../library && [ \"$CI\" = \"true\" ] && npm ci || npm install",
     "build-library": "cd ../library && npm run build",
     "prebuild": "npm run build-library",
     "build": "nest build",
@@ -51,7 +50,7 @@
     "migration:revert": "npm run typeorm -- -d src/config/typeorm-migration.config.ts migration:revert"
   },
   "dependencies": {
-    "@c4/library": "file:../library/dist",
+    "@c4/library": "*",
     "@langchain/aws": "0.1.10",
     "@langchain/community": "^0.3.42",
     "@langchain/core": "^0.3.50",

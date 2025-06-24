@@ -1,8 +1,7 @@
 {
   "license": "Apache-2.0",
   "scripts": {
-    "prepare": "husky && npm run install-all && npm run env",
-    "install-all": "(cd backend && npm install) && (cd frontend && npm install) && (cd services/reis && command -v poetry && poetry install || echo 'poetry not installed, skipping')",
+    "prepare": "husky && npm run env",
     "env": "node scripts/env-setup.js --noOverwrites",
     "env:fix": "node scripts/env-setup.js",
     "dev": "node scripts/run-tests.js --devSetup",
@@ -42,5 +41,13 @@
     "tree-kill": "1.2.2",
     "vitest": "3.2.1",
     "wait-on": "8.0.3"
-  }
+  },
+  "workspaces": [
+    "library",
+    "backend",
+    "frontend",
+    "e2e",
+    "scripts",
+    "dev/mcp-tool-as-server"
+  ]
 }
