@@ -5,8 +5,7 @@
   "main": "index.js",
   "scripts": {
     "lint": "eslint \"tests/**/*.ts\"",
-    "lint:fix": "eslint \"tests/**/*.ts\" --fix",
-    "postinstall": "playwright install"
+    "lint:fix": "eslint \"tests/**/*.ts\" --fix"
   },
   "keywords": [],
   "author": "",
