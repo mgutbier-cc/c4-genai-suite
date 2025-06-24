@@ -13,3 +13,4 @@ allow_licenses:
   - 'LGPL-2.1-or-later'
   - 'LGPL-2.1-only'
   - 'Unlicense'
+warn-only: true

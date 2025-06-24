@@ -23,8 +23,8 @@ jobs:
             containerfile: Containerfile.backend
             context: .
           - name: frontend
-            containerfile: frontend/Containerfile
-            context: frontend/
+            containerfile: Containerfile.frontend
+            context: .
           - name: reis
             containerfile: services/reis/Containerfile
             context: services/reis/

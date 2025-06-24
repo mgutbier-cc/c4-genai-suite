@@ -3,6 +3,7 @@ updates:
   - package-ecosystem: "docker"
     directories:
       - "/"
+      - "/services/reis"
       - "/dev/caddy-gateway-proxy"
     schedule:
       interval: "weekly"
