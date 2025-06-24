@@ -1,7 +1,7 @@
 {
   "license": "Apache-2.0",
   "scripts": {
-    "prepare": "husky && npm run env",
+    "postinstall": "husky && npm run env",
     "env": "node scripts/env-setup.js --noOverwrites",
     "env:fix": "node scripts/env-setup.js",
     "dev": "node scripts/run-tests.js --devSetup",

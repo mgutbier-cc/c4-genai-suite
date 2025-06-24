@@ -103,7 +103,6 @@ jobs:
         with:
           node-version: 22.x
           cache: 'npm'
-          cache-dependency-path: e2e/package-lock.json
       - run: npm ci
       - run: npx playwright install ${{ inputs.browser }} --with-deps
       - run: npx playwright test --project=${{ inputs.browser }}
