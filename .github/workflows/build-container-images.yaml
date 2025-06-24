@@ -45,4 +45,4 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
           build-args: |
-            VERSION=${{ github.sha }}
+            VERSION=${{ github.ref_type == 'tag' && github.ref_name || github.sha }}
