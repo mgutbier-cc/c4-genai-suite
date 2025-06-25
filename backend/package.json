@@ -1,12 +1,19 @@
 {
-  "name": "c4-genai-suite",
-  "version": "0.0.1",
+  "name": "@codecentric/c4-genai-suite-backend",
+  "version": "1.0.0",
   "description": "",
   "author": "",
-  "private": true,
   "license": "Apache-2.0",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://npm.pkg.github.com"
+  },
+  "repository": {
+    "url": "https://github.com/codecentric/c4-genai-suite.git"
+  },
   "scripts": {
     "build": "nest build",
+    "build:lib": "tsc -p tsconfig.lib.json",
     "format": "prettier --write \"src/**/*.ts\"",
     "start": "nest start",
     "dev": "nest start",
