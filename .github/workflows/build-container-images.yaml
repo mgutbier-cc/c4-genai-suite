@@ -20,8 +20,8 @@ jobs:
             containerfile: Containerfile
             context: .
           - name: backend
-            containerfile: Containerfile.backend
-            context: .
+            containerfile: backend/Containerfile
+            context: backend/
           - name: frontend
             containerfile: frontend/Containerfile
             context: frontend/

@@ -1,5 +1,5 @@
-import { Extension, ExtensionStringArgument } from '@c4/library/domain/extensions';
 import { HttpException, HttpStatus } from '@nestjs/common';
+import { Extension, ExtensionStringArgument } from 'src/domain/extensions';
 import { ExtensionEntity, ExtensionRepository } from '../../database';
 import { ExplorerService } from '../services';
 import { TestExtension, TestExtensionHandler } from './test-extension';

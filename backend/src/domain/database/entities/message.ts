@@ -1,5 +1,5 @@
-import { Source } from '@c4/library/domain/chat';
 import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Source } from 'src/domain/chat';
 import { ConversationEntity } from './conversation';
 
 export type ExtensionSource = Source & { extensionExternalId: string };

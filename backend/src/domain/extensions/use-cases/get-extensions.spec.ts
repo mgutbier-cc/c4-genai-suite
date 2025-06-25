@@ -1,4 +1,4 @@
-import { Extension, ExtensionStringArgument } from '@c4/library/domain/extensions';
+import { Extension, ExtensionStringArgument } from 'src/domain/extensions';
 import { ExtensionEntity, ExtensionRepository } from '../../database';
 import { ExplorerService } from '../services';
 import { GetExtensions, GetExtensionsHandler } from './get-extensions';

@@ -1,4 +1,4 @@
-import { Extension } from '@c4/library/domain/extensions';
+import { Extension } from 'src/domain/extensions';
 import {
   BucketEntity,
   BucketRepository,

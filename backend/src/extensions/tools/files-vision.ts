@@ -1,4 +1,3 @@
-import { User } from '@c4/library/domain/users';
 import { DynamicStructuredToolInput } from '@langchain/core/dist/tools';
 import { StringOutputParser } from '@langchain/core/output_parsers';
 import { ChatPromptTemplate } from '@langchain/core/prompts';
@@ -8,6 +7,7 @@ import { QueryBus } from '@nestjs/cqrs';
 import { z } from 'zod';
 import { ChatContext, ChatMiddleware, ChatNextDelegate, GetContext } from 'src/domain/chat';
 import { Extension, ExtensionEntity, ExtensionSpec } from 'src/domain/extensions';
+import { User } from 'src/domain/users';
 import { GetFiles, GetFilesResponse, matchExtension } from '../../domain/files';
 import { I18nService } from '../../localization/i18n.service';
 

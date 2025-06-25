@@ -1,7 +1,7 @@
-import { ChatContext } from '@c4/library/domain/chat';
-import { Extension, ExtensionConfiguration, ExtensionEntity } from '@c4/library/domain/extensions';
-import { User } from '@c4/library/domain/users';
 import { StructuredToolInterface } from '@langchain/core/tools';
+import { ChatContext } from 'src/domain/chat';
+import { Extension, ExtensionConfiguration, ExtensionEntity } from 'src/domain/extensions';
+import { User } from 'src/domain/users';
 import { I18nService } from '../../localization/i18n.service';
 
 type ExtensionConstructor = new (i18n: I18nService) => Extension;
