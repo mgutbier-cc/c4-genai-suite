@@ -46,7 +46,7 @@ jobs:
 
   image-promotion:
     runs-on: ubuntu-latest
-    #if: github.ref_name == 'main'
+    if: github.ref_name == 'main'
     needs: build-and-push-container
     permissions:
       contents: read
