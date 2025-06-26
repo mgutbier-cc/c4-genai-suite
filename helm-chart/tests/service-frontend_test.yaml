@@ -55,7 +55,7 @@ tests:
           value: http
       - equal:
           path: spec.ports[0].port
-          value: 3080
+          value: 80
       - equal:
           path: spec.ports[0].protocol
           value: TCP
