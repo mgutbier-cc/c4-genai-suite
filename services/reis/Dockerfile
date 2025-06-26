@@ -24,7 +24,6 @@ RUN find /reis/.venv -name "*.pyc" -delete && \
     find /reis/.venv -name "*.pyo" -delete && \
     find /reis/.venv -name "*.pyd" -delete && \
     find /reis/.venv -name "__pycache__" -type d -exec rm -rf {} + 2>/dev/null || true && \
-    find /reis/.venv -name "*.so" -exec strip -s {} \; && \
     find /reis/.venv -name "*.c" -delete && \
     find /reis/.venv -name "*.h" -delete
 
