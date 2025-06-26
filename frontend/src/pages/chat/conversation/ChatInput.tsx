@@ -1,7 +1,7 @@
 import { ActionIcon, Button, Portal } from '@mantine/core';
 import { IconFilter, IconPaperclip } from '@tabler/icons-react';
 import { useMutation } from '@tanstack/react-query';
-import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
+import React, { ChangeEvent, useCallback, useEffect, useRef, useState } from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
 import { toast } from 'react-toastify';
 import { ConfigurationDto, FileDto, useApi } from 'src/api';
@@ -133,6 +133,39 @@ export function ChatInput({ conversationId, configuration, isDisabled, isEmpty, 
       fileInputRef.current.value = '';
     }
   };
+
+  const handleFilePaste = useCallback(
+    (event: ClipboardEvent) => {
+      event.preventDefault();
+      const items = event.clipboardData?.items;
+      if (!items) {
+        return;
+      }
+
+      const filesToUpload = [] as File[];
+      for (let i = 0; i < items.length; i++) {
+        const blob = items[i].getAsFile();
+
+        if (!blob) {
+          continue;
+        }
+
+        filesToUpload.push(blob);
+      }
+
+      handleUploadFile(filesToUpload);
+    },
+    [handleUploadFile],
+  );
+
+  useEffect(() => {
+    window.addEventListener('paste', handleFilePaste as EventListener);
+
+    return () => {
+      window.removeEventListener('paste', handleFilePaste as EventListener);
+    };
+  }, [handleFilePaste]);
+
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const footer = `${configuration?.chatFooter || ''} ${theme.chatFooter || ''}`.trim();
