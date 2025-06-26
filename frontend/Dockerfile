@@ -16,4 +16,6 @@ WORKDIR /srv
 COPY Caddyfile /etc/caddy/Caddyfile
 COPY --from=build /src/dist /srv
 
+EXPOSE 3080
+
 ENTRYPOINT ["caddy", "run", "--config", "/etc/caddy/Caddyfile"]

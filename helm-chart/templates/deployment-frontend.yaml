@@ -40,7 +40,7 @@ spec:
           image: "{{ .Values.frontend.image.repository }}:{{ .Values.frontend.image.tag }}"
           securityContext: {{ .Values.frontend.containerSecurityContext | toYaml | nindent 12 }}
           ports:
-            - containerPort: 80
+            - containerPort: 3080
               name: http
               protocol: TCP
             - containerPort: 2019
@@ -49,11 +49,11 @@ spec:
           livenessProbe:
             httpGet:
               path: /
-              port: 80
+              port: 3080
           readinessProbe:
             httpGet:
               path: /
-              port: 80
+              port: 3080
           resources: {{ .Values.frontend.resources | toYaml | nindent 12 }}
           {{- with .Values.frontend.extraEnvVars }}
           env:

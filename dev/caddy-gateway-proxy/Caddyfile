@@ -1,4 +1,4 @@
-:80 {
+:3080 {
 	encode
 
 	handle /api/* {
@@ -17,7 +17,7 @@
 		redir /blobs/* /api{uri} permanent
 	}
 
-	reverse_proxy frontend:80 {
+	reverse_proxy frontend:3080 {
 		header_up Host {host}
 		header_up X-Real-IP {remote}
 
