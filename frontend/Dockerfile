@@ -11,6 +11,8 @@ RUN VITE_VERSION="$VERSION" npm run build
 
 FROM caddy:2.10.0
 
+RUN setcap -r /usr/bin/caddy
+
 WORKDIR /srv
 
 COPY Caddyfile /etc/caddy/Caddyfile
