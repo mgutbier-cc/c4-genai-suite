@@ -1,7 +1,8 @@
-FROM python:3.13-bookworm AS builder
+FROM python:3.13-alpine3.22 AS builder
 
-# Create app directory
 WORKDIR /reis
+
+RUN apk add --no-cache build-base=0.5-r3 linux-headers=6.14.2-r0
 
 RUN pip install poetry
 
@@ -30,13 +31,10 @@ RUN find /reis/.venv -name "*.pyc" -delete && \
 #
 # RUNTIME
 #
-FROM python:3.13-slim-bookworm AS production
+FROM python:3.13-alpine3.22 AS production
 
-# we need this library for psycopg and extracting audio streams from videos
-RUN apt-get update && \
-    apt-get -y install --no-install-recommends libpq5=15.13-0+deb12u1 ffmpeg=7:5.1.6-0+deb12u1 && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+# we need this library for extracting audio streams from videos
+RUN apk add --no-cache ffmpeg=6.1.2-r2
 
 ENV VIRTUAL_ENV=/reis/.venv \
 PATH="/reis/.venv/bin:$PATH"
@@ -49,7 +47,7 @@ COPY logging.conf logging.conf
 # download necessary files for unstructured
 ENV TIKTOKEN_CACHE_DIR="/tiktoken_cache" \
 NLTK_DATA="/nltk_data"
-RUN mkdir -p ${NLTK_DATA} && python rei_s/prepare.py
+RUN mkdir -p ${NLTK_DATA} && python3 rei_s/prepare.py
 
 EXPOSE 3201
 
