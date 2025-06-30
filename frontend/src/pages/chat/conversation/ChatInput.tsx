@@ -280,13 +280,15 @@ export function ChatInput({ conversationId, configuration, isDisabled, isEmpty, 
                 )}
               </div>
               <div className="flex items-center gap-1">
-                <SpeechRecognitionButton
-                  listening={listening}
-                  toggleSpeechRecognition={toggleSpeechRecognition}
-                  speechLanguage={speechLanguage}
-                  setSpeechLanguage={setSpeechLanguage}
-                  languages={speechRecognitionLanguages}
-                />
+                {configuration?.extensions?.some((e) => e.name === 'speech-to-text') && (
+                  <SpeechRecognitionButton
+                    listening={listening}
+                    toggleSpeechRecognition={toggleSpeechRecognition}
+                    speechLanguage={speechLanguage}
+                    setSpeechLanguage={setSpeechLanguage}
+                    languages={speechRecognitionLanguages}
+                  />
+                )}
                 <ActionIcon
                   type="submit"
                   size="lg"
