@@ -40,7 +40,7 @@ jobs:
       backend:
         image: ghcr.io/${{ github.repository }}/backend:commit-${{ github.sha }}
         env:
-          BASE_URL: http://localhost:3080
+          BASE_URL: http://localhost
           DB_URL: postgres://admin:secret@pgvector:5432/cccc
           C4_DB_RETRY_DELAY: 6000
           NODE_ENV: development
@@ -52,7 +52,7 @@ jobs:
       caddy-gateway-proxy:
         image: ghcr.io/${{ github.repository }}/dev-helper/caddy-gateway-proxy:latest
         ports:
-          - 3080:3080
+          - 80:80
       reis:
         image: ghcr.io/${{ github.repository }}/reis:commit-${{ github.sha }}
         options: >-
@@ -94,7 +94,7 @@ jobs:
     env:
       AZURE_OPEN_AI_API_KEY: ${{ secrets.AZURE_OPENAI_API_KEY }}
       TEST_DIR: ./${{ inputs.testdir }}
-      URL: http://localhost:3080
+      URL: http://localhost
       REIS_ENDPOINT: http://reis:3201
       MCP_SERVER_ENDPOINT: http://mcp-fetch:8000/sse
     steps:
