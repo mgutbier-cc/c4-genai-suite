@@ -59,6 +59,11 @@
                     "type": "string",
                     "description": "The TLS secret name. Should be c4-tls-cert",
                     "default": "\"\""
+                },
+                "annotations": {
+                    "type": "object",
+                    "description": "Map of annotations to add for ingress",
+                    "default": {}
                 }
             }
         },

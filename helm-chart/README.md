@@ -75,6 +75,7 @@ reis:
 | `ingress.clusterIssuer`    | The cluster issuer for Let's Encrypt. Should be `letsencrypt-<ENVIRONMENT>` | `""`    |
 | `ingress.host`             | The host for ingress                                                        | `""`    |
 | `ingress.tlsSecretName`    | The TLS secret name. Should be c4-tls-cert                                  | `""`    |
+| `ingress.annotations`      | Map of annotations to add for ingress                                       | `{}`    |
 
 ### Backend
 
