@@ -11,6 +11,10 @@ export async function login(page: Page, user?: { email: string; password: string
   await page.getByTestId('menu user').waitFor({ state: 'visible' });
 }
 
+export async function goto(page: Page, relativePath: string) {
+  await page.goto(`${config.URL}${relativePath}`);
+}
+
 export async function enterAdminArea(page: Page) {
   if (await hasMenuItem(page, { name: 'Admin' })) {
     await page.getByRole('menuitem', { name: 'Admin' }).click();
@@ -112,7 +116,7 @@ export async function cleanup(page: Page) {
   await enterUserArea(page);
 }
 
-async function clearMessages(page: Page) {
+export async function clearMessages(page: Page) {
   await page.getByTestId('menu user').click();
   await page.getByRole('menuitem', { name: 'Clear conversations' }).click();
   const confirm = page.getByRole('button', { name: 'Confirm deletion' });
@@ -475,10 +479,11 @@ export async function checkSelectedConfiguration(page: Page, configuration: { na
 
 export async function selectConfiguration(page: Page, configuration: { name: string }) {
   await page.getByTestId('chat-assistent-select').click();
-  const element = page.locator(`p:has-text("${configuration.name}")`).first();
+
+  const element = page.locator(`p`).getByText(configuration.name, { exact: true });
   await expect(element).toBeVisible();
   await element.click();
-  await page.waitForTimeout(1000);
+  await page.waitForLoadState('networkidle');
 }
 
 export async function navigateToUserAdministration(page: Page) {

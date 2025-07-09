@@ -12,6 +12,7 @@ import {
   enterUserArea,
   expectElementInYRange,
   login,
+  newChat,
   selectConfiguration,
   sendMessage,
   uploadFileWhileInChat,
@@ -158,6 +159,7 @@ if (!config.AZURE_OPEN_AI_API_KEY) {
 
     await test.step('should reject large file', async () => {
       await enterUserArea(page);
+      await newChat(page);
       await selectConfiguration(page, configuration);
       await uploadFileWhileInChat(page, 'birthdays.pptx', true);
       await page
