@@ -181,7 +181,6 @@ if (!config.AZURE_OPEN_AI_API_KEY) {
       configuration.name = `E2E-Test-Other-${Date.now()}`;
       configuration.description = `Description for ${configuration.name}`;
       await createConfiguration(page, configuration);
-      //await addAzureModelToConfiguration(page, configuration, { deployment: 'gpt-4o-mini' });
       await addAzureModelToWizardConfiguration(page, { deployment: 'gpt-4o-mini' });
       await addSystemPromptToConfiguration(page, configuration, { text: 'Your are a helpful assistant.' });
       await editBucket(page, { name: conversationFilesBucket, fileSizeLimits: { general: 10 } });

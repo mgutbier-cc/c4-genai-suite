@@ -15,11 +15,6 @@ test('Documentation on Admin page', async ({ page }) => {
     await enterUserArea(page);
   });
 
-  /* await test.step('should not show documentation on chat page', async () => {
-    await page.waitForTimeout(2000); // such that docs have some time to load
-    await expect(page.getByTestId('docs-icon')).toBeHidden();
-  }); */
-
   await test.step('should show documentation on button click in admin area', async () => {
     await enterAdminArea(page);
     await page.getByTestId('docs-icon').click();

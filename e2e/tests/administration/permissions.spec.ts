@@ -29,11 +29,27 @@ test.describe('User permissions', () => {
     expect(await hasMenuItem(page, { name: 'Admin' })).toBe(false);
   });
 
-  test('newly created user with group default should not see admin section', async ({ page }) => {
+  test('should show admin documentation on chat page for admin users', async ({ page }) => {
+    await enterUserArea(page);
+    await page.waitForTimeout(2000); // such that docs have some time to load
+    await page.getByTestId('docs-icon').click();
+    await page.getByRole('heading', { name: 'Documentation' }).click();
+    await page.getByRole('heading', { name: 'How to setup an Assistent' }).click();
+  });
+
+  test('newly created user with group default', async ({ page }) => {
     await navigateToUserAdministration(page);
     await createUser(page, { email: randomEmail, name: randomName, password: randomPassword });
     await logout(page);
-    await login(page, { email: randomEmail, password: randomPassword });
-    expect(await hasMenuItem(page, { name: 'Admin' })).toBe(false);
+
+    await test.step('should not see admin section', async () => {
+      await login(page, { email: randomEmail, password: randomPassword });
+      expect(await hasMenuItem(page, { name: 'Admin' })).toBe(false);
+    });
+
+    await test.step('non adimn user should not see documentation on the chat page', async () => {
+      await page.waitForTimeout(2000); // such that docs have some time to load
+      await expect(page.getByTestId('docs-icon')).toBeHidden();
+    });
   });
 });

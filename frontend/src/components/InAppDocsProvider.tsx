@@ -4,6 +4,7 @@ import { IconX } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import React, { createContext, useContext, useState } from 'react';
 import { useLocation } from 'react-router-dom';
+import { useProfile } from 'src/hooks';
 import { texts } from 'src/texts';
 import { Markdown } from '../components/Markdown';
 
@@ -56,9 +57,11 @@ const InAppDocsLayout: React.FC<InAppDocsLayoutProps> = ({ docsMarkdown, isDocsV
  * @description This is a combined context provider for the useDocsContext hook and a layout component which displays the docs penal on the right.
  */
 export const InAppDocsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { isAdmin } = useProfile();
   const fetchMarkdown = async (urlPath: string): Promise<string> => {
     const urlPathWithoutIds = urlPath.replace(/\/[0-9]+$/, '');
-    const response = await fetch(`/docs${urlPathWithoutIds}/index.md`);
+    const documentName = isAdmin ? 'index.md' : 'user.md';
+    const response = await fetch(`/docs${urlPathWithoutIds}/${documentName}`);
     const contentType = response.headers.get('content-type') || '';
     const markdownDocsFileExists = !contentType.includes('html');
     if (!markdownDocsFileExists) throw new Error('Failed to fetch documentation.');
