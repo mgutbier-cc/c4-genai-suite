@@ -4,10 +4,7 @@ permissions:
   contents: read
 
 on: 
-  push:
-    branches:
-      - main
-      - ci/continuous-deployment-poc # TODO remove this line before merging into `main`
+  workflow_call:
 
 jobs:
   update-gitlab-repo:
