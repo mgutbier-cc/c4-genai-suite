@@ -69,5 +69,4 @@ jobs:
 
   trigger-in-house-deployment:
     needs: build-container
-    if: ${{ inputs.push-to-registry }}
     uses: ./.github/workflows/deployment.yaml
