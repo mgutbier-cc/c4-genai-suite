@@ -5,6 +5,13 @@ permissions:
 
 on: 
   workflow_call:
+    secrets:
+      GITLAB_URL:
+        required: true
+      GITLAB_INFRASTRUCTURE_PAT:
+        required: true
+      GITLAB_INFRASTRUCTURE_PROJECT_ID:
+        required: true
 
 jobs:
   update-gitlab-repo:
