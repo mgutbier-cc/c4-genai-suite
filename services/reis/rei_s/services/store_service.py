@@ -58,9 +58,7 @@ def process_file(config: Config, file: SourceFile, chunk_size: int | None = None
     return chunks_with_metadata
 
 
-def process_and_upsert_file(
-    config: Config, file: SourceFile, bucket: str, index_name: str | None, version: str | None
-) -> bool:
+def process_and_upsert_file(config: Config, file: SourceFile, bucket: str, index_name: str | None) -> bool:
     logger.info(f"Processing and add file: {file.id}")
     upsert_file(config, file, bucket, file.id, index_name)
     files_processed_counter.inc()

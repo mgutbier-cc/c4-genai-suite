@@ -12,7 +12,7 @@ def get_test_config(settings: dict[str, Any] | None = None) -> Config:
         settings = {}
 
     config: dict[str, Any] = dict(
-        _env_file=None,
+        _env_file=".env.test",
         store_type="dev-null",
         embeddings_type="random-test-embeddings",
     )

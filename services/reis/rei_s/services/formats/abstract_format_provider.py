@@ -14,8 +14,18 @@ class AbstractFormatProvider(ABC):
         return check_file_name_extensions(self.file_name_extensions, file)
 
     @abstractmethod
-    def process_file(self, file: SourceFile, chunk_size: int | None = None) -> list[Document]:
+    def _process_file(self, file: SourceFile, chunk_size: int | None = None) -> list[Document]:
         raise NotImplementedError
+
+    def process_file(self, file: SourceFile, chunk_size: int | None = None) -> list[Document]:
+        # hook for common pre- and postprocessing
+
+        docs = self._process_file(file, chunk_size)
+
+        for doc in docs:
+            doc.metadata["fingerprint"] = file.fingerprint
+
+        return docs
 
     def clean_up(self, document: Document) -> Document:
         return document

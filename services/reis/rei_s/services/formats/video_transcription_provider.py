@@ -65,10 +65,10 @@ class VideoTranscriptionProvider(VoiceTranscriptionProvider):
 
         return audio_only_file
 
-    def process_file(
+    def _process_file(
         self, file: SourceFile, chunk_size: int | None = None, chunk_overlap: int | None = None
     ) -> list[Document]:
         audio_file = self.extract_audio_to_file(file.path)
-        chunks = super().process_file(audio_file, chunk_size, chunk_overlap)
+        chunks = super()._process_file(audio_file, chunk_size, chunk_overlap)
         audio_file.delete()
         return chunks

@@ -23,7 +23,7 @@ class JsonProvider(AbstractFormatProvider):
         chunk_size = validate_chunk_size(chunk_size, self.default_chunk_size)
         return RecursiveJsonSplitter(max_chunk_size=chunk_size)
 
-    def process_file(self, file: SourceFile, chunk_size: int | None = None) -> list[Document]:
+    def _process_file(self, file: SourceFile, chunk_size: int | None = None) -> list[Document]:
         text = file.buffer.decode()
 
         json_dict = json.loads(text)

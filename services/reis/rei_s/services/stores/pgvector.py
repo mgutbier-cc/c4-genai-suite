@@ -52,24 +52,38 @@ class PGVectorStoreAdapter(StoreAdapter):
     def upsert_documents(self, new_documents: list[Document]) -> None:
         from sqlalchemy import select
 
-        # TODO: ensure that the new_documents all have the the same doc_id
         first_new_document = new_documents[0]
         doc_id = first_new_document.metadata["doc_id"]
-        new_fingerprint = first_new_document.metadata["fingerprint"]
+        bucket = first_new_document.metadata["bucket"]
+        new_fingerprint = first_new_document.metadata.get("fingerprint")
+
+        # ensure that the new_documents all have the the same doc_id and bucket
+        assert all(doc_id == doc.metadata["doc_id"] for doc in new_documents)
+        assert all(bucket == doc.metadata["bucket"] for doc in new_documents)
 
         logger.debug(f"Upserting document with ID {doc_id}")
         with self.vector_store._make_sync_session() as session:
-            stmt = select(self.vector_store.EmbeddingStore.cmetadata["fingerprint"].astext).where(
-                self.vector_store.EmbeddingStore.cmetadata["doc_id"].astext == doc_id
+            collection = self.vector_store.get_collection(session)
+            if not collection:
+                logger.warning("Collection not found")
+                return
+
+            stmt = (
+                select(self.vector_store.EmbeddingStore.cmetadata["fingerprint"].astext)
+                .where(self.vector_store.EmbeddingStore.cmetadata["doc_id"].astext == doc_id)
+                .where(self.vector_store.EmbeddingStore.cmetadata["bucket"].astext == bucket)
+                .where(self.vector_store.EmbeddingStore.collection_id == collection.uuid)
             )
-            existing_fingerprint = session.execute(stmt).scalar_one_or_none()
+            existing_fingerprint = session.execute(stmt).first()
+            if existing_fingerprint is not None:
+                existing_fingerprint = existing_fingerprint[0]
 
         logger.info(
             f"Fingerprint comparison. Document ID: {doc_id}. "
             f"Existing fingerprint: {existing_fingerprint}. New fingerprint: {new_fingerprint}."
         )
 
-        if existing_fingerprint != new_fingerprint:
+        if new_fingerprint is None or existing_fingerprint != new_fingerprint:
             self.delete(doc_id)
             self.add_documents(new_documents)
             logger.debug(f"Upserted document with ID {doc_id}")

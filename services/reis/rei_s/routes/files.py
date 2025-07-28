@@ -150,12 +150,16 @@ async def post_files(
         raise ValueError("File name is not defined")
     if file_mime_type is None:
         raise ValueError("content_type is not defined")
+    if file_id is None:
+        raise ValueError("file_id is not defined")
 
-    # TODO: ensure file_id is not None
     dest_path = get_uploaded_file_path(file_id)
     async with aiofiles.open(dest_path, "wb") as temp_file:
         async for chunk in request.stream():
             await temp_file.write(chunk)
+
+    # TODO: use a hash of the file content as fingerprint if fingerprint is not given?
+    #  That should not break anything and save us reprocessing of known files.
 
     q = SourceFile(
         id=file_id, path=dest_path, file_name=unquote(file_name), mime_type=file_mime_type, fingerprint=fingerprint

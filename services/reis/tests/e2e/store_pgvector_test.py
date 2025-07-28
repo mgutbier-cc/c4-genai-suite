@@ -85,26 +85,45 @@ def client(mocker: MockerFixture, app: FastAPI) -> TestClient:
 
 
 class FileUploaderFixture(Protocol):
-    def __call__(self, bucket: int = ..., file_id: int = ..., index_name: str = ...) -> tuple[str, str]: ...
+    def __call__(
+        self,
+        bucket: int = ...,
+        file_id: int = ...,
+        index_name: str = ...,
+        fingerprint: str | None = None,
+        content: str | None = None,
+    ) -> tuple[str, str]: ...
 
 
 @pytest.fixture
 def file_uploader(faker: Faker, client: TestClient) -> FileUploaderFixture:
-    def inner(bucket: int = 1, file_id: int = 1, index_name: str = INDEX_NAME) -> tuple[str, str]:
+    def inner(
+        bucket: int = 1,
+        file_id: int = 1,
+        index_name: str = INDEX_NAME,
+        fingerprint: str | None = None,
+        content: str | None = None,
+    ) -> tuple[str, str]:
         filename = faker.file_name(extension="txt")
-        content = faker.text()
+        if content is None:
+            content = faker.text()
+
+        headers = {
+            "bucket": str(bucket),
+            "id": str(file_id),
+            "fileName": filename,
+            "fileMimeType": "text/plain",
+            "indexName": index_name,
+        }
+
+        if fingerprint:
+            headers.update({"fingerprint": fingerprint})
 
         f = BytesIO(content.encode())
         response = client.post(
             "/files",
             data=f,  # type: ignore[arg-type]
-            headers={
-                "bucket": str(bucket),
-                "id": str(file_id),
-                "fileName": filename,
-                "fileMimeType": "text/plain",
-                "indexName": index_name,
-            },
+            headers=headers,
         )
 
         assert response.status_code == 200
@@ -239,3 +258,29 @@ def test_get_files_filtered_by_file_ids(file_uploader: FileUploaderFixture, clie
 )
 def test_filter_conversion(test_input: StoreFilter, expected: dict[str, Any]) -> None:
     assert PGVectorStoreAdapter.convert_filter(test_input) == expected
+
+
+def test_upsert_file_exisiting_same_fingerprint(client: TestClient, file_uploader: FileUploaderFixture) -> None:
+    file_uploader(bucket=1, file_id=1, fingerprint="deadbeef", content="first upload")
+    file_uploader(bucket=1, file_id=1, fingerprint="deadbeef", content="second upload")
+
+    response_get_files = client.get("/files", params={"query": "upload", "bucket": "1", "take": "3"})
+
+    assert response_get_files.status_code == 200
+
+    content = response_get_files.json()
+    # the fingerprint was equal, so the content should not have been updated
+    assert content["files"][0]["content"] == "first upload"
+
+
+def test_upsert_file_exisiting_different_fingerprint(client: TestClient, file_uploader: FileUploaderFixture) -> None:
+    file_uploader(bucket=1, file_id=1, fingerprint="deadbeef", content="first upload")
+    file_uploader(bucket=1, file_id=1, fingerprint="cafebabe", content="second upload")
+
+    response_get_files = client.get("/files", params={"query": "upload", "bucket": "1", "take": "3"})
+
+    assert response_get_files.status_code == 200
+
+    content = response_get_files.json()
+    # the fingerprint was different, so the content should have been updated
+    assert content["files"][0]["content"] == "second upload"

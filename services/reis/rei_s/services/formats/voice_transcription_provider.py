@@ -178,7 +178,7 @@ class VoiceTranscriptionProvider(AbstractFormatProvider):
 
         return segments_files, segment_timestamps, audio_codec
 
-    def process_file(
+    def _process_file(
         self, file: SourceFile, chunk_size: int | None = None, chunk_overlap: int | None = None
     ) -> list[Document]:
         if self.parser is None:

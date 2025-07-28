@@ -42,7 +42,7 @@ class YamlProvider(AbstractFormatProvider):
             chunk_overlap=chunk_overlap,
         )
 
-    def process_file(
+    def _process_file(
         self, file: SourceFile, chunk_size: int | None = None, chunk_overlap: int | None = None
     ) -> list[Document]:
         text = file.buffer.decode()

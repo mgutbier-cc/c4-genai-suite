@@ -29,7 +29,7 @@ class LibreOfficeProvider(AbstractFormatProvider):
         chunk_overlap = validate_chunk_overlap(chunk_overlap, self.default_chunk_overlap)
         return RecursiveCharacterTextSplitter(chunk_size=chunk_size, chunk_overlap=chunk_overlap)
 
-    def process_file(
+    def _process_file(
         self, file: SourceFile, chunk_size: int | None = None, chunk_overlap: int | None = None
     ) -> list[Document]:
         loader = UnstructuredODTLoader(file.path, mode="elements")
