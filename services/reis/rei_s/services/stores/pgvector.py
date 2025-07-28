@@ -50,23 +50,41 @@ class PGVectorStoreAdapter(StoreAdapter):
         self.vector_store.add_documents(documents)
 
     def upsert_documents(self, new_documents: list[Document]) -> None:
-        from sqlalchemy import select
-
         first_new_document = new_documents[0]
         doc_id = first_new_document.metadata["doc_id"]
         bucket = first_new_document.metadata["bucket"]
         new_fingerprint = first_new_document.metadata.get("fingerprint")
-
-        # ensure that the new_documents all have the the same doc_id and bucket
-        assert all(doc_id == doc.metadata["doc_id"] for doc in new_documents)
-        assert all(bucket == doc.metadata["bucket"] for doc in new_documents)
-
         logger.debug(f"Upserting document with ID {doc_id}")
+
+        # if the current document does not provide a fingerprint, we can skip searching for an old version
+        if new_fingerprint is not None:
+            # ensure that the new_documents all have the the same doc_id and bucket
+            assert all(doc_id == doc.metadata["doc_id"] for doc in new_documents)
+            assert all(bucket == doc.metadata["bucket"] for doc in new_documents)
+
+            existing_fingerprint = self.get_fingerprint_by_doc_id(doc_id, bucket)
+            logger.info(
+                f"Fingerprint comparison. Document ID: {doc_id}. "
+                f"Existing fingerprint: {existing_fingerprint}. New fingerprint: {new_fingerprint}."
+            )
+
+        if new_fingerprint is None or existing_fingerprint != new_fingerprint:
+            self.delete(doc_id)
+            self.add_documents(new_documents)
+            logger.debug(
+                f"Upserted document with ID {doc_id}:fingerprints do not match, deleted existing and added new"
+            )
+        else:
+            logger.debug(f"Upserted document with ID {doc_id}: fingerprints match, do nothing")
+
+    def get_fingerprint_by_doc_id(self, doc_id: str, bucket: str) -> str | None:
+        from sqlalchemy import select
+
         with self.vector_store._make_sync_session() as session:
             collection = self.vector_store.get_collection(session)
             if not collection:
                 logger.warning("Collection not found")
-                return
+                return None
 
             stmt = (
                 select(self.vector_store.EmbeddingStore.cmetadata["fingerprint"].astext)
@@ -78,15 +96,8 @@ class PGVectorStoreAdapter(StoreAdapter):
             if existing_fingerprint is not None:
                 existing_fingerprint = existing_fingerprint[0]
 
-        logger.info(
-            f"Fingerprint comparison. Document ID: {doc_id}. "
-            f"Existing fingerprint: {existing_fingerprint}. New fingerprint: {new_fingerprint}."
-        )
-
-        if new_fingerprint is None or existing_fingerprint != new_fingerprint:
-            self.delete(doc_id)
-            self.add_documents(new_documents)
-            logger.debug(f"Upserted document with ID {doc_id}")
+        assert existing_fingerprint is None or isinstance(existing_fingerprint, str)
+        return existing_fingerprint
 
     def delete(self, doc_id: str) -> None:
         # The vector store does not offer a method to delete chunks by metadata (only chunk id), thus
