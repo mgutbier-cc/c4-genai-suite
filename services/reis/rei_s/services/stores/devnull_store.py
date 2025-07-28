@@ -16,6 +16,9 @@ class DevNullStoreAdapter(StoreAdapter):
     def add_documents(self, documents: list[Document]) -> None:
         pass
 
+    def upsert_documents(self, new_documents: list[Document]) -> None:
+        pass
+
     def delete(self, doc_id: str) -> None:
         pass
 

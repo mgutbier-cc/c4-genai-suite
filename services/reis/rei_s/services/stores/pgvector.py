@@ -55,17 +55,24 @@ class PGVectorStoreAdapter(StoreAdapter):
         # TODO: ensure that the new_documents all have the the same doc_id
         first_new_document = new_documents[0]
         doc_id = first_new_document.metadata["doc_id"]
+        new_fingerprint = first_new_document.metadata["fingerprint"]
+
+        logger.debug(f"Upserting document with ID {doc_id}")
         with self.vector_store._make_sync_session() as session:
             stmt = select(self.vector_store.EmbeddingStore.cmetadata["fingerprint"].astext).where(
                 self.vector_store.EmbeddingStore.cmetadata["doc_id"].astext == doc_id
             )
             existing_fingerprint = session.execute(stmt).scalar_one_or_none()
 
-            new_fingerprint = first_new_document.metadata["fingerprint"]
+        logger.info(
+            f"Fingerprint comparison. Document ID: {doc_id}. "
+            f"Existing fingerprint: {existing_fingerprint}. New fingerprint: {new_fingerprint}."
+        )
 
         if existing_fingerprint != new_fingerprint:
             self.delete(doc_id)
             self.add_documents(new_documents)
+            logger.debug(f"Upserted document with ID {doc_id}")
 
     def delete(self, doc_id: str) -> None:
         # The vector store does not offer a method to delete chunks by metadata (only chunk id), thus

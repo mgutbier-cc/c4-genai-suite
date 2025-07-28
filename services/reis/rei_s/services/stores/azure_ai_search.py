@@ -102,6 +102,9 @@ class AzureAISearchStoreAdapter(StoreAdapter):
             raise ValueError("If you give an `id` for any document, you need to give an id for every document")
         self.vector_store.add_documents(documents, keys=keys)
 
+    def upsert_documents(self, new_documents: list[Document]) -> None:
+        raise NotImplementedError("Azure AI Search does not support upsert. TODO!")
+
     def delete(self, doc_id: str) -> None:
         # The `delete` method can only delete by the "key", which is unique, i.e., the chunk id.
         # To delete by our doc_id, we first need to fetch all chunk_ids of the doc_id.
