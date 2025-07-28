@@ -135,6 +135,13 @@ async def post_files(
     index_name: Annotated[
         str | None, Header(description="The name of the index", alias="indexName"), AfterValidator(check_index_name)
     ] = None,
+    fingerprint: Annotated[
+        str | None,
+        Header(
+            description="The fingerprint of the file. If it matches a saved file with the same id "
+            "nothing is done, otherwise the existing file is overwritten."
+        ),
+    ] = None,
 ) -> None:
     """
     Processes the file into chunks and stores them in the vector store.
@@ -144,17 +151,20 @@ async def post_files(
     if file_mime_type is None:
         raise ValueError("content_type is not defined")
 
+    # TODO: ensure file_id is not None
     dest_path = get_uploaded_file_path(file_id)
     async with aiofiles.open(dest_path, "wb") as temp_file:
         async for chunk in request.stream():
             await temp_file.write(chunk)
 
-    q = SourceFile(id=file_id, path=dest_path, file_name=unquote(file_name), mime_type=file_mime_type)
+    q = SourceFile(
+        id=file_id, path=dest_path, file_name=unquote(file_name), mime_type=file_mime_type, fingerprint=fingerprint
+    )
     try:
         files_added_to_queue.inc()
         await wrap_future(
             request.app.state.executor.submit(
-                store_service.process_and_add_file, config, q, bucket, index_name=index_name
+                store_service.process_and_upsert_file, config, q, bucket, index_name=index_name
             )
         )
     except Exception as e:

@@ -13,6 +13,7 @@ class SourceFile(BaseModel):
     path: str
     mime_type: str
     file_name: str
+    fingerprint: str | None = None
 
     @property
     def size(self) -> int:

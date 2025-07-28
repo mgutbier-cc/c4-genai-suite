@@ -47,14 +47,14 @@ def clear_previous_ingests() -> None:
 def import_confluence_page(page_id: int, page_markdown: str) -> None:
     """
     Ingests a Confluence page into the C4 bucket.
-    
+
     Args:
         page_markdown: The HTML content of the Confluence page to ingest
         page_id: The ID of the Confluence page to ingest
     """
     files = {'file': (f"confluence_page_{page_id}.md", page_markdown, "text/markdown")}
-    response = requests.post('http://localhost:8080/api/buckets/89/files', files=files,
-                         headers={"x-api-key": os.environ.get("C4_TOKEN")})
+    response = requests.post(f'{c4_base_url}/api/buckets/{bucket_id}/files', files=files,
+                         headers={"id": f"{page_id}", "x-api-key": os.environ.get("C4_TOKEN")})
 
     if response.status_code == 201:
         logger.debug("Upload Confluence page to c4", bucket_id=bucket_id, page_id=page_id, status="success")

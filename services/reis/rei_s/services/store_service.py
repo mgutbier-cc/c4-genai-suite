@@ -58,9 +58,11 @@ def process_file(config: Config, file: SourceFile, chunk_size: int | None = None
     return chunks_with_metadata
 
 
-def process_and_add_file(config: Config, file: SourceFile, bucket: str, index_name: str | None) -> bool:
+def process_and_upsert_file(
+    config: Config, file: SourceFile, bucket: str, index_name: str | None, version: str | None
+) -> bool:
     logger.info(f"Processing and add file: {file.id}")
-    add_file(config, file, bucket, file.id, index_name)
+    upsert_file(config, file, bucket, file.id, index_name)
     files_processed_counter.inc()
     logger.info(f"Completed file: {file.id}")
     return True
@@ -141,11 +143,11 @@ def generate_batches(
     raise HTTPException(status_code=415, detail="File format not supported.")
 
 
-def add_file(config: Config, file: SourceFile, bucket: str, doc_id: str, index_name: str | None = None) -> None:
+def upsert_file(config: Config, file: SourceFile, bucket: str, doc_id: str, index_name: str | None = None) -> None:
     vector_store = get_vector_store(config=config, index_name=index_name)
     for batch, index, num_batches in generate_batches(config, file, bucket, doc_id):
         logger.info(f"add {len(batch)} chunks for doc_id {doc_id}: ({index + 1}/{num_batches})")
-        vector_store.add_documents(batch)
+        vector_store.upsert_documents(batch)
         logger.info(f"ready with {len(batch)} chunks for doc_id {doc_id}: ({index + 1}/{num_batches})")
 
 

@@ -49,6 +49,24 @@ class PGVectorStoreAdapter(StoreAdapter):
     def add_documents(self, documents: list[Document]) -> None:
         self.vector_store.add_documents(documents)
 
+    def upsert_documents(self, new_documents: list[Document]) -> None:
+        from sqlalchemy import select
+
+        # TODO: ensure that the new_documents all have the the same doc_id
+        first_new_document = new_documents[0]
+        doc_id = first_new_document.metadata["doc_id"]
+        with self.vector_store._make_sync_session() as session:
+            stmt = select(self.vector_store.EmbeddingStore.cmetadata["fingerprint"].astext).where(
+                self.vector_store.EmbeddingStore.cmetadata["doc_id"].astext == doc_id
+            )
+            existing_fingerprint = session.execute(stmt).scalar_one_or_none()
+
+            new_fingerprint = first_new_document.metadata["fingerprint"]
+
+        if existing_fingerprint != new_fingerprint:
+            self.delete(doc_id)
+            self.add_documents(new_documents)
+
     def delete(self, doc_id: str) -> None:
         # The vector store does not offer a method to delete chunks by metadata (only chunk id), thus
         # we do it ourselves by calling SQLAlchemy directly using the protected `_make_sync_session` method.
