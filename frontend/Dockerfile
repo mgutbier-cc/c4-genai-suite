@@ -17,9 +17,3 @@ WORKDIR /srv
 
 COPY Caddyfile /etc/caddy/Caddyfile
 COPY --from=build /src/dist /srv
-
-ENV PORT=80
-
-COPY entrypoint.sh /usr/local/bin/entrypoint.sh
-RUN chmod +x /usr/local/bin/entrypoint.sh
-ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]

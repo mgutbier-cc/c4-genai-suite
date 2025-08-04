@@ -118,12 +118,12 @@ tests:
           path: spec.template.metadata.annotations.zeep
           value: zoop
 
-  - it: defines a named port called `http` for container port 3000
+  - it: defines a named port called `http` for container port 8080
     template: deployment-frontend.yaml
     asserts:
       - equal:
           path: spec.template.spec.containers[0].ports[0].containerPort
-          value: 80
+          value: 8080
       - equal:
           path: spec.template.spec.containers[0].ports[0].name
           value: http
@@ -133,13 +133,13 @@ tests:
     asserts:
       - equal:
           path: spec.template.spec.containers[0].ports[0].containerPort
-          value: 80
+          value: 8080
       - equal:
           path: spec.template.spec.containers[0].livenessProbe.httpGet.port
-          value: 80
+          value: 8080
       - equal:
           path: spec.template.spec.containers[0].readinessProbe.httpGet.port
-          value: 80
+          value: 8080
 
   - it: has extra environment variables set
     template: deployment-frontend.yaml

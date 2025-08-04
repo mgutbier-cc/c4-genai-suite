@@ -50,7 +50,7 @@ The c4 GenAI Suite is designed for extensibility. Writing extensions is easy, as
 
 ## Getting Started
 
-### Using Docker-Compose
+### Using Docker Compose
 
 - Run `docker compose up` in the project root.
 - Open the [application](http://localhost:3333) in a browser. The default login credentials are user `admin@example.com` and password `secret`.
