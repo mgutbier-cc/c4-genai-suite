@@ -267,3 +267,9 @@ tests:
           content:
             name: test
             emptyDir: {}
+
+  - it: has no pod affinity by default
+    template: deployment-reis.yaml
+    asserts:
+      - notExists:
+          path: spec.template.spec.affinity

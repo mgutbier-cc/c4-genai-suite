@@ -152,6 +152,8 @@ backend:
   podSecurityContext: {}
   ## @param backend.containerSecurityContext Configure the Security Context for the Container
   containerSecurityContext: {}
+  ## @param backend.podAntiAffinity Configure Pod Anti-Affinity rules for backend Pods
+  podAntiAffinity: {}
 
 ## @section Frontend
 frontend:
@@ -206,6 +208,8 @@ frontend:
   podSecurityContext: {}
   ## @param frontend.containerSecurityContext Configure the Security Context for the Container
   containerSecurityContext: {}
+  ## @param frontend.podAntiAffinity Configure Pod Anti-Affinity rules for frontend Pods
+  podAntiAffinity: {}
 
 
 ## @section REIS
@@ -336,3 +340,5 @@ reis:
   podSecurityContext: {}
   ## @param reis.containerSecurityContext Configure the Security Context for the Container
   containerSecurityContext: {}
+  ## @param reis.podAntiAffinity Configure Pod Anti-Affinity rules for REIS Pods
+  podAntiAffinity: {}

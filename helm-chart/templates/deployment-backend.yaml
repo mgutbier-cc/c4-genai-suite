@@ -37,6 +37,11 @@ spec:
         {{- end }}
     spec:
       securityContext: {{ .Values.backend.podSecurityContext | toYaml | nindent 8 }}
+      {{- if .Values.backend.podAntiAffinity }}
+      affinity:
+        podAntiAffinity:
+          {{- toYaml .Values.backend.podAntiAffinity | nindent 10 }}
+      {{- end }}
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.backend.image.repository }}:{{ .Values.backend.image.tag }}"

@@ -37,6 +37,11 @@ spec:
         {{- end }}
     spec:
       securityContext: {{ .Values.reis.podSecurityContext | toYaml | nindent 8 }}
+      {{- if .Values.reis.podAntiAffinity }}
+      affinity:
+        podAntiAffinity:
+          {{- toYaml .Values.reis.podAntiAffinity | nindent 10 }}
+      {{- end }}
       containers:
         - name: {{ .Chart.Name }}-reis
           image: "{{ .Values.reis.image.repository }}:{{ .Values.reis.image.tag }}"

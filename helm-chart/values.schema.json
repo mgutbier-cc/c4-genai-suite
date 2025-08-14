@@ -382,6 +382,11 @@
                     "type": "object",
                     "description": "Configure the Security Context for the Container",
                     "default": {}
+                },
+                "podAntiAffinity": {
+                    "type": "object",
+                    "description": "Configure Pod Anti-Affinity rules for backend Pods",
+                    "default": {}
                 }
             }
         },
@@ -504,6 +509,11 @@
                 "containerSecurityContext": {
                     "type": "object",
                     "description": "Configure the Security Context for the Container",
+                    "default": {}
+                },
+                "podAntiAffinity": {
+                    "type": "object",
+                    "description": "Configure Pod Anti-Affinity rules for frontend Pods",
                     "default": {}
                 }
             }
@@ -837,6 +847,11 @@
                 "containerSecurityContext": {
                     "type": "object",
                     "description": "Configure the Security Context for the Container",
+                    "default": {}
+                },
+                "podAntiAffinity": {
+                    "type": "object",
+                    "description": "Configure Pod Anti-Affinity rules for REIS Pods",
                     "default": {}
                 }
             }

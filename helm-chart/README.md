@@ -134,6 +134,7 @@ reis:
 | `backend.podAnnotations`                              | Map of annotations to add to the c4 pods                                                                                                                                                                                | `{}`                                         |
 | `backend.podSecurityContext`                          | Configure the Security Context for the Pod                                                                                                                                                                              | `{}`                                         |
 | `backend.containerSecurityContext`                    | Configure the Security Context for the Container                                                                                                                                                                        | `{}`                                         |
+| `backend.podAntiAffinity`                             | Configure Pod Anti-Affinity rules for backend Pods                                                                                                                                                                      | `{}`                                         |
 
 ### Frontend
 
@@ -159,6 +160,7 @@ reis:
 | `frontend.podAnnotations`                       | Map of annotations to add to the frontend pods                                                                          | `{}`                                          |
 | `frontend.podSecurityContext`                   | Configure the Security Context for the Pod                                                                              | `{}`                                          |
 | `frontend.containerSecurityContext`             | Configure the Security Context for the Container                                                                        | `{}`                                          |
+| `frontend.podAntiAffinity`                      | Configure Pod Anti-Affinity rules for frontend Pods                                                                     | `{}`                                          |
 
 ### REIS
 
@@ -217,6 +219,7 @@ reis:
 | `reis.podAnnotations`                                         | Map of annotations to add to the REI-S pods                                                                             | `{}`                                      |
 | `reis.podSecurityContext`                                     | Configure the Security Context for the Pod                                                                              | `{}`                                      |
 | `reis.containerSecurityContext`                               | Configure the Security Context for the Container                                                                        | `{}`                                      |
+| `reis.podAntiAffinity`                                        | Configure Pod Anti-Affinity rules for REIS Pods                                                                         | `{}`                                      |
 
 ## Migrations
 
