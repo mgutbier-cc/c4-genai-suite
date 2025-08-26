@@ -130,7 +130,7 @@ export function ChatInput({ textareaRef, chatId, configuration, isDisabled, isEm
 
   const deleteFile = useMutation({
     mutationFn: async (file: VirtualFile) => {
-      return api.files.deleteUserFile(file.id);
+      return api.files.deleteUserFile(file.id, chatId);
     },
     onSuccess: (_) => {
       toast.success(texts.files.deleted);

@@ -16,6 +16,7 @@ import {
 import { User } from 'src/domain/users';
 import { assignDefined } from 'src/lib';
 import { I18nService } from '../../../localization/i18n.service';
+import { ConversationFileEntity, ConversationFileRepository } from '../../database/entities/conversation-file';
 import { UploadedFile } from '../interfaces';
 import { FilesApi, ResponseError } from './generated';
 import { buildClient, buildFile, getBucketId } from './utils';
@@ -56,6 +57,8 @@ export class UploadFileHandler implements ICommandHandler<UploadFile, UploadFile
     private readonly buckets: BucketRepository,
     @InjectRepository(FileEntity)
     private readonly files: FileRepository,
+    @InjectRepository(ConversationFileEntity)
+    private readonly conversationFiles: ConversationFileRepository,
     @InjectRepository(BlobEntity)
     private readonly blob: BlobRepository,
     private readonly i18n: I18nService,
@@ -73,11 +76,17 @@ export class UploadFileHandler implements ICommandHandler<UploadFile, UploadFile
       fileName,
       fileSize,
       mimeType,
-      conversationId,
       uploadStatus: FileUploadStatus.Successful,
       userId: user?.id,
     });
     const created = await this.files.save(entity);
+
+    if (conversationId) {
+      await this.conversationFiles.save({
+        conversationId,
+        fileId: created.id,
+      });
+    }
 
     await this.blob.save({
       id: uuid.v4(),
@@ -170,7 +179,7 @@ export class UploadFileHandler implements ICommandHandler<UploadFile, UploadFile
         throw new NotFoundException(`File with id ${fileIdToUpdate} not found in bucket ${bucketId}`);
       }
 
-      await api.deleteFile(existingFile.externalDocumentId.toString());
+      await api.deleteFile(existingFile.id.toString());
       return existingFile;
     }
 
@@ -194,9 +203,10 @@ export class UploadFileHandler implements ICommandHandler<UploadFile, UploadFile
       fileSize,
       mimeType,
       bucket: embedType !== 'none' ? bucket : undefined,
-      conversationId,
       uploadStatus: FileUploadStatus.InProgress,
       userId: user?.id,
+      createdAt: new Date(),
+      updatedAt: new Date(),
     });
 
     const blob = new File([buffer], fileName, { type: mimeType });
@@ -204,22 +214,14 @@ export class UploadFileHandler implements ICommandHandler<UploadFile, UploadFile
     let result: UploadedFile | undefined;
 
     try {
-      // Use the save method otherwise we would not get previous values.
       const created = await this.files.save(entity);
       result = buildFile(created);
-
+      // Use the save method otherwise we would not get previous values.
       if (embedType === 'vector' || embedType === 'vector_and_text') {
         const bucketPath = getBucketId(bucket, user, conversationId);
-        await api.uploadFile(
-          encodeURIComponent(fileName),
-          mimeType,
-          bucketPath,
-          (result.externalDocumentId ?? result.id).toString(),
-          bucket.indexName,
-          {
-            body: blob,
-          },
-        );
+        await api.uploadFile(encodeURIComponent(fileName), mimeType, bucketPath, created.id.toString(), bucket.indexName, {
+          body: blob,
+        });
         await this.files.update({ id: entity.id }, { uploadStatus: FileUploadStatus.Successful });
       }
 
@@ -227,6 +229,7 @@ export class UploadFileHandler implements ICommandHandler<UploadFile, UploadFile
         const fileContent = await api.processFile(encodeURIComponent(fileName), mimeType, 100000, {
           body: blob,
         });
+        await this.blob.delete({ fileId: entity.id });
         await this.blob.save({
           id: uuid.v4(),
           fileId: entity.id,
@@ -236,6 +239,13 @@ export class UploadFileHandler implements ICommandHandler<UploadFile, UploadFile
           category: BlobCategory.FILE_PROCESSED,
         });
         await this.files.update({ id: entity.id }, { uploadStatus: FileUploadStatus.Successful });
+      }
+
+      if (conversationId) {
+        await this.conversationFiles.save({
+          conversationId,
+          fileId: created.id,
+        });
       }
 
       return new UploadFileResponse(result);

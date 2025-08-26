@@ -156,9 +156,18 @@ export class UserFilesController {
     required: true,
     type: Number,
   })
+  @ApiQuery({
+    name: 'conversationId',
+    required: false,
+    type: 'number',
+  })
   @ApiNoContentResponse()
-  async deleteUserFile(@Req() req: Request, @Param('fileId') fileId: number) {
-    const command = new DeleteFile(req.user, +fileId);
+  async deleteUserFile(
+    @Req() req: Request,
+    @Param('fileId', ParseIntPipe) fileId: number,
+    @Query('conversationId', new ParseIntPipe({ optional: true })) conversationId?: number,
+  ) {
+    const command = new DeleteFile(req.user, fileId, conversationId);
 
     await this.commandBus.execute(command);
   }

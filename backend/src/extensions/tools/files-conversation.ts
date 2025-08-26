@@ -141,10 +141,10 @@ class InternalTool extends StructuredTool {
 
   protected async _call(arg: z.infer<typeof this.schema>): Promise<string> {
     try {
-      const externalDocumentIds = this.files.map((file) => file.externalDocumentId);
+      const fileIds = this.files.map((file) => file.id);
 
       const result: SearchFilesResponse = await this.queryBus.execute(
-        new SearchFiles(this.bucket.id, arg.query, this.context.user, this.take, externalDocumentIds),
+        new SearchFiles(this.bucket.id, arg.query, this.context.user, this.take, fileIds),
       );
       const sources = this.showSources ?? false;
 
