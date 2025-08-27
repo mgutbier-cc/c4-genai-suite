@@ -39,7 +39,6 @@ import { MCPToolsExtension } from './tools/mcp-tools';
 import { OpenApiExtension } from './tools/open-api';
 import { ContextExtension } from './tools/show-context';
 import { SimpleInputExtension } from './tools/simple-input';
-import { StructuredOutputExtension } from './tools/structured-output';
 import { UserArgsExtension } from './tools/user-args';
 import { WholeFilesExtension } from './tools/whole-files-conversation';
 
@@ -136,7 +135,6 @@ export class ExtensionLibraryModule {
         OpenApiExtension,
         SimpleInputExtension,
         SpeechToTextExtension,
-        StructuredOutputExtension,
         SummaryPromptExtension,
         UserArgsExtension,
         VertexAIModelExtension,

@@ -279,7 +279,7 @@ export class ApiResponsesController {
     return {
       id: `resp_${id}`,
       object: 'response',
-      created_at: 1754392616,
+      created_at: Math.round(Date.now() / 1000),
       status: 'completed',
       background: false,
       model: request.model,
