@@ -38,8 +38,11 @@ export class AllowMultipleConversationsPerFile1756187236677 implements Migration
     `);
 
     await queryRunner.query(`
-      INSERT INTO company_chat.conversations_files("fileId", "conversationId")
-      SELECT DISTINCT "docId", "conversationId" FROM company_chat.files WHERE "conversationId" IS NOT NULL;
+      INSERT INTO company_chat.conversations_files("fileId", "conversationId", "messageId")
+      SELECT DISTINCT f."docId", f."conversationId", MAX(m.id) FROM company_chat.files f
+      LEFT JOIN company_chat.messages m ON m."conversationId" = f."conversationId" AND f."createdAt" <= m."createdAt" AND m."type" = 'human'
+      WHERE f."conversationId" IS NOT NULL
+      GROUP BY f."docId", f."conversationId";
 
       DELETE from company_chat.files where "id" <> "docId";
     `);
