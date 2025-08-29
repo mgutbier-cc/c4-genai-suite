@@ -61,7 +61,7 @@ export class SummarizeHistoryMiddleware implements ChatMiddleware {
     const outputChain = prompt.pipe(llm).pipe(outputParser);
 
     try {
-      const name = await outputChain.invoke({ content: userMessages.join(' ') }, { timeout: 10000 });
+      const name = await outputChain.invoke({ content: userMessages.join(' ') }, { timeout: 60000 });
       return name ?? this.i18n.t('texts.chat.noSummary');
     } catch (err) {
       this.logger.error('Failed to get conversation summary.', err);
